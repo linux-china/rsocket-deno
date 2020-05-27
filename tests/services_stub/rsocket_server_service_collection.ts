@@ -13,13 +13,9 @@ class UserService {
     }
 }
 
-const routeHandler = new RSocketRouteHandler();
-
-routeHandler.addServices("com.example.UserService", new UserService());
-
 const server = await RSocketServer.create({
     accept(setup: ConnectionSetupPayload, sendingSocket: RSocket) {
-        return routeHandler;
+        return RSocketRouteHandler.fromHandler("com.example.UserService", new UserService());
     }
 }).bind("tcp://127.0.0.1:42252");
 
