@@ -53,9 +53,53 @@ let response = await rsocket.requestResponse(Payload.fromText("hello", "metadata
 console.log(response.getDataUtf8())
 ```
 
-## Service Routing
+## Service Routing for RSocket service side
 
-Please refer rsocket_server_service_collection.ts under tests/server
+For production development, please use RSocket
+
+```typescript
+import {
+    RSocketServer,
+    RSocket,
+    ConnectionSetupPayload
+} from "../../mod.ts"
+import {RSocketRouteHandler} from "../../rsocket/RSocket.ts";
+
+//RSocket Service
+class UserService {
+
+    async findNickById(id: number): Promise<string> {
+        return "DenoServer";
+    }
+}
+
+const server = await RSocketServer.create({
+    accept(setup: ConnectionSetupPayload, sendingSocket: RSocket) {
+        return RSocketRouteHandler.fromHandler("com.example.UserService", new UserService());
+    }
+}).bind("tcp://127.0.0.1:42252");
+```
+
+## Service stub for requester side
+
+You can use TypeScript interface as stub to communicate with remote RSocket service.
+
+```typescript
+import {RSocketConnector} from "../../rsocket/RSocketConnector.ts"
+import {buildServiceStub} from "../../rsocket/RSocket.ts";
+
+const rsocket = await RSocketConnector.create().connect("tcp://127.0.0.1:42252");
+
+interface UserService {
+    findNickById(id: number): Promise<string>;
+}
+
+const userService = buildServiceStub<UserService>(rsocket, "com.example.UserService")
+
+let nick = await userService.findNickById(1);
+console.log(nick)
+
+```
 
 ## Interoperate with Spring Boot RSocket
 
