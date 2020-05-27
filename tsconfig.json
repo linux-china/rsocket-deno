@@ -74,6 +74,9 @@
     /* Disallow inconsistently-cased references to the same file. */
     "plugins": [
       {
+        "name": "typescript-deno-plugin",
+        "enable": true
+        //"importmap": "import_map.json"
       }
     ]
   }
