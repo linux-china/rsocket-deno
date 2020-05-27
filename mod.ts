@@ -1,4 +1,5 @@
 export {Payload, ConnectionSetupPayload} from "./rsocket/Payload.ts";
+export {RSocket, AbstractRSocket} from "./rsocket/RSocket.ts";
 export {RSocketConnector} from "./rsocket/RSocketConnector.ts";
 export {RSocketServer} from "./rsocket/RSocketServer.ts";
 export {
@@ -8,8 +9,8 @@ export {
     forRequestStream,
     forRequestChannel
 } from "./rsocket/SocketAcceptor.ts";
+export {RSocketRouteHandler, buildServiceStub} from "./rsocket/core/RSocketRouter.ts";
 
-export {RSocket} from "./rsocket/RSocket.ts";
 export {
     CompositeMetadata,
     MetadataEntry,
