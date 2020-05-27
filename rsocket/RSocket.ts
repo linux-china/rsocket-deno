@@ -90,7 +90,13 @@ export class RSocketRouteHandler extends AbstractRSocket {
         super();
     }
 
-    public addServices(serviceName: string, handler: any): void {
+    public static fromHandler(serviceName: string, handler: any) {
+        const routeHandler = new RSocketRouteHandler();
+        routeHandler.addService(serviceName, handler);
+        return routeHandler;
+    }
+
+    public addService(serviceName: string, handler: any): void {
         this.serviceCollection.set(serviceName, handler);
     }
 
