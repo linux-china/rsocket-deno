@@ -1,10 +1,10 @@
 export class WellKnownMimeType {
     private readonly _identifier: number;
-    private readonly _string: string;
+    private readonly _mimeType: string;
 
     constructor(string: string, identifier: number) {
         this._identifier = identifier;
-        this._string = string;
+        this._mimeType = string;
     }
 
     public static fromIdentifier(id: number): WellKnownMimeType {
@@ -18,7 +18,7 @@ export class WellKnownMimeType {
         if (!mimeType) throw new Error('type must be non-null');
 
         // force UNPARSEABLE if by chance UNKNOWN_RESERVED_MIME_TYPE's text has been used
-        if (mimeType === UNKNOWN_RESERVED_MIME_TYPE.string) {
+        if (mimeType === UNKNOWN_RESERVED_MIME_TYPE.mimeType) {
             return UNPARSEABLE_MIME_TYPE;
         }
         return TYPES_BY_MIME_STRING.get(mimeType) || UNPARSEABLE_MIME_TYPE;
@@ -32,8 +32,8 @@ export class WellKnownMimeType {
         return this._identifier;
     }
 
-    get string(): string {
-        return this._string;
+    get mimeType(): string {
+        return this._mimeType;
     }
 }
 
@@ -204,7 +204,7 @@ TYPES_BY_MIME_ID.fill(UNKNOWN_RESERVED_MIME_TYPE);
 for (let value of ALL_MIME_TYPES) {
     if (value.identifier >= 0) {
         TYPES_BY_MIME_ID[value.identifier] = value;
-        TYPES_BY_MIME_STRING.set(value.string, value);
+        TYPES_BY_MIME_STRING.set(value.mimeType, value);
     }
 }
 

@@ -94,7 +94,7 @@ export class RSocketRouteHandler extends AbstractRSocket {
         let jsonText = payload.getDataUtf8();
         if (jsonText && payload.metadata) {
             let compositeMetadata = CompositeMetadata.fromU8Array(payload.metadata);
-            let entry = compositeMetadata.findEntry(MESSAGE_RSOCKET_COMPOSITE_METADATA.string);
+            let entry = compositeMetadata.findEntry(MESSAGE_RSOCKET_COMPOSITE_METADATA.mimeType);
             if (entry) {
                 let routingMetadata = RoutingMetadata.fromEntry(entry);
                 let routing = this.parseRouting(routingMetadata);

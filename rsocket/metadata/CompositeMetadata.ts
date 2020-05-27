@@ -160,7 +160,7 @@ export class WellKnownMimeTypeEntry implements MetadataEntry {
     }
 
     getMimeType(): string {
-        return this._type.string;
+        return this._type.mimeType;
     }
 
 
@@ -244,7 +244,7 @@ export class RoutingMetadata extends TaggingMetadata {
         if (extraTags) {
             tags.push(...extraTags)
         }
-        super(MESSAGE_RSOCKET_ROUTING.string, tags);
+        super(MESSAGE_RSOCKET_ROUTING.mimeType, tags);
         this.routingKey = routingKey;
         this.extraTags = extraTags;
     }
@@ -266,7 +266,7 @@ export class AuthMetadata implements MetadataEntry {
     authTypeId: number;
 
     constructor(authTypeId: number, authData: Uint8Array) {
-        this.mimeType = MESSAGE_RSOCKET_AUTHENTICATION.string;
+        this.mimeType = MESSAGE_RSOCKET_AUTHENTICATION.mimeType;
         this.authTypeId = authTypeId;
         this.authData = authData;
     }
@@ -302,7 +302,7 @@ export class MessageMimeTypeMetadata implements MetadataEntry {
     dataMimeType: string;
 
     constructor(dataMimeType: string) {
-        this.mimeType = MESSAGE_RSOCKET_MIMETYPE.string;
+        this.mimeType = MESSAGE_RSOCKET_MIMETYPE.mimeType;
         this.dataMimeType = dataMimeType;
 
     }
@@ -333,7 +333,7 @@ export class MessageAcceptMimeTypesMetadata implements MetadataEntry {
     acceptMimeTypes: string[]
 
     constructor(acceptMimeTypes: string[]) {
-        this.mimeType = MESSAGE_RSOCKET_ACCEPT_MIMETYPES.string;
+        this.mimeType = MESSAGE_RSOCKET_ACCEPT_MIMETYPES.mimeType;
         this.acceptMimeTypes = acceptMimeTypes;
 
     }
@@ -369,7 +369,7 @@ export class ZipkinTracingMetadata implements MetadataEntry {
 
 
     constructor(flags: number, spanId: number, traceIdHigh: number | undefined, traceIdLow: number, parentId: number | undefined) {
-        this.mimeType = MESSAGE_RSOCKET_TRACING_ZIPKIN.string;
+        this.mimeType = MESSAGE_RSOCKET_TRACING_ZIPKIN.mimeType;
         this.flags = flags;
         this.spanId = spanId;
         this.traceIdHigh = traceIdHigh;
