@@ -1,8 +1,8 @@
 import {Payload} from "./Payload.ts";
-import {ErrorPublisher, Publisher, Subscriber} from "../reactivestreams/mod.ts";
-import {CompositeMetadata, MetadataEntry, RoutingMetadata} from "./metadata/CompositeMetadata.ts";
-import {MESSAGE_RSOCKET_COMPOSITE_METADATA} from "./metadata/WellKnownMimeType.ts";
-import {RSocketError, INVALID} from "./core/RSocketError.ts";
+import {ErrorPublisher, Publisher} from "../reactivestreams/mod.ts";
+import {CompositeMetadata, RoutingMetadata} from "./metadata/CompositeMetadata.ts";
+import {MESSAGE_RSOCKET_ROUTING} from "./metadata/WellKnownMimeType.ts";
+import {RSocketError, INVALID, APPLICATION_ERROR} from "./core/RSocketError.ts";
 
 export interface RSocket {
     /**
@@ -60,19 +60,19 @@ export class AbstractRSocket implements RSocket {
     }
 
     public metadataPush(payload: Payload): Promise<void> {
-        return Promise.reject(new Error("Not implemented"));
+        return Promise.reject(new RSocketError(INVALID, "Not implemented"));
     }
 
     public requestChannel(payloads: Publisher<Payload>): Publisher<Payload> {
-        return new ErrorPublisher<Payload>("Not implemented")
+        return new ErrorPublisher<Payload>(INVALID, "Not implemented")
     }
 
     public requestResponse(payload: Payload): Promise<Payload> {
-        return Promise.reject("Not implemented");
+        return Promise.reject(new RSocketError(INVALID, "Not implemented"));
     }
 
     public requestStream(payload: Payload): Publisher<Payload> {
-        return new ErrorPublisher<Payload>("Not implemented")
+        return new ErrorPublisher<Payload>(INVALID, "Not implemented")
     }
 }
 
@@ -83,39 +83,94 @@ type ServiceRouting = {
 
 
 export class RSocketRouteHandler extends AbstractRSocket {
-    serviceCollection: Map<string, any>;
+    serviceCollection: Map<string, any> = new Map();
 
-    constructor(serviceCollection: Map<string, any>) {
+    constructor() {
         super();
-        this.serviceCollection = serviceCollection;
+    }
+
+    public addServices(serviceName: string, handler: any): void {
+        this.serviceCollection.set(serviceName, handler);
     }
 
     requestResponse(payload: Payload): Promise<Payload> {
-        let jsonText = payload.getDataUtf8();
-        if (jsonText && payload.metadata) {
+        if (payload.metadata) {
             let compositeMetadata = CompositeMetadata.fromU8Array(payload.metadata);
-            let entry = compositeMetadata.findEntry(MESSAGE_RSOCKET_COMPOSITE_METADATA.mimeType);
-            if (entry) {
-                let routingMetadata = RoutingMetadata.fromEntry(entry);
-                let routing = this.parseRouting(routingMetadata);
-                let params = JSON.parse(jsonText);
-                let handler = this.getServiceHandler(routing.service, routing.method);
-                if (handler) {
-                    let promiseResult;
-                    if (Array.isArray(params)) {
-                        promiseResult = handler(...params);
+            let routing = this.parseRouting(compositeMetadata);
+            if (routing) {
+                let params: any[] = [];
+                let jsonText = payload.getDataUtf8();
+                if (jsonText) {
+                    let jsonObject = JSON.parse(jsonText);
+                    if (Array.isArray(jsonText)) {
+                        params = jsonObject;
                     } else {
-                        promiseResult = handler(params);
+                        params[0] = jsonObject;
                     }
-                    return promiseResult.then((result: any) => {
-                        return Payload.fromText(JSON.stringify(result), "metadata")
+                }
+                let serviceHandler = this.getServiceHandler(routing.service, routing.method);
+                if (serviceHandler) {
+                    return serviceHandler(...params).then((result: any) => {
+                        return Payload.fromText(JSON.stringify(result), "");
                     })
-                } else {
-                    return Promise.reject(new RSocketError(INVALID, `service not found: ${routing.service}:${routing.method}`));
                 }
             }
         }
-        return Promise.reject(new RSocketError(INVALID, "Illegal request"));
+        return Promise.reject(new RSocketError(INVALID, "Handler not found!"));
+    }
+
+
+    fireAndForget(payload: Payload): Promise<void> {
+        if (payload.metadata) {
+            let compositeMetadata = CompositeMetadata.fromU8Array(payload.metadata);
+            let routing = this.parseRouting(compositeMetadata);
+            if (routing) {
+                let params: any[] = [];
+                let jsonText = payload.getDataUtf8();
+                if (jsonText) {
+                    let jsonObject = JSON.parse(jsonText);
+                    if (Array.isArray(jsonText)) {
+                        params = jsonObject;
+                    } else {
+                        params[0] = jsonObject;
+                    }
+                }
+                let serviceHandler = this.getServiceHandler(routing.service, routing.method);
+                if (serviceHandler) {
+                    return serviceHandler(...params).then((result: any) => {
+                        return Payload.fromText(JSON.stringify(result), "")
+                    })
+                }
+            }
+        }
+        return Promise.reject(new RSocketError(INVALID, "Handler not found!"));
+    }
+
+
+    requestStream(payload: Payload): Publisher<Payload> {
+        if (payload.metadata) {
+            let compositeMetadata = CompositeMetadata.fromU8Array(payload.metadata);
+            let routing = this.parseRouting(compositeMetadata);
+            if (routing) {
+                let params: any[] = [];
+                let jsonText = payload.getDataUtf8();
+                if (jsonText) {
+                    let jsonObject = JSON.parse(jsonText);
+                    if (Array.isArray(jsonText)) {
+                        params = jsonObject;
+                    } else {
+                        params[0] = jsonObject;
+                    }
+                }
+                let serviceHandler = this.getServiceHandler(routing.service, routing.method);
+                if (serviceHandler) {
+                    return serviceHandler(...params).then((result: any) => {
+                        return Payload.fromText(JSON.stringify(result), "")
+                    })
+                }
+            }
+        }
+        return new ErrorPublisher(INVALID, "Handler not found!");
     }
 
     public getServiceHandler(serviceName: string, method: string): any | undefined {
@@ -126,10 +181,15 @@ export class RSocketRouteHandler extends AbstractRSocket {
         return undefined;
     }
 
-    public parseRouting(routingMetadata: RoutingMetadata): ServiceRouting {
-        let routingKey = routingMetadata.routingKey;
-        let serviceName = routingKey.substring(0, routingKey.lastIndexOf("."))
-        let methodName = routingKey.substring(routingKey.lastIndexOf(".") + 1)
-        return {service: serviceName, method: methodName};
+    public parseRouting(compositeMetadata: CompositeMetadata): ServiceRouting | undefined {
+        let metadataEntry = compositeMetadata.findEntry(MESSAGE_RSOCKET_ROUTING.mimeType);
+        if (metadataEntry) {
+            let routingMetadata = RoutingMetadata.fromEntry(metadataEntry);
+            let routingKey = routingMetadata.routingKey;
+            let serviceName = routingKey.substring(0, routingKey.lastIndexOf("."));
+            let methodName = routingKey.substring(routingKey.lastIndexOf(".") + 1);
+            return {service: serviceName, method: methodName};
+        }
+        return undefined;
     }
 }
