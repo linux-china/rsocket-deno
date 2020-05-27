@@ -222,7 +222,8 @@ export class RSocketRequester implements RSocket {
                     },
 
                     onError: (error: any) => {
-                        this._connection.write(encodeErrorFrame(streamId, APPLICATION_ERROR, error.toString())).then()
+                        let rsocketError = convertToRSocketError(error);
+                        this._connection.write(encodeErrorFrame(streamId, rsocketError.code, rsocketError.message)).then()
                     },
 
                     onComplete: () => {
