@@ -3,6 +3,7 @@ import {ErrorPublisher, Publisher} from "../reactivestreams/mod.ts";
 import {CompositeMetadata, RoutingMetadata} from "./metadata/CompositeMetadata.ts";
 import {MESSAGE_RSOCKET_ROUTING} from "./metadata/WellKnownMimeType.ts";
 import {RSocketError, INVALID, APPLICATION_ERROR} from "./core/RSocketError.ts";
+import {encode} from "../deps.ts";
 
 export interface RSocket {
     /**
@@ -192,4 +193,28 @@ export class RSocketRouteHandler extends AbstractRSocket {
         }
         return undefined;
     }
+}
+
+export function buildServiceStub<T>(rsocket: RSocket, serviceName: string): T {
+    let handler = {
+        get(target: any, methodName: string) {
+            return (...args: any[]) => {
+                let payload = new Payload();
+                if (args) {
+                    payload.data = encode(JSON.stringify(args));
+                }
+                let compositeMetadata = CompositeMetadata.fromEntries(new RoutingMetadata(`${serviceName}.${methodName}`));
+                payload.metadata = compositeMetadata.toUint8Array();
+                return rsocket.requestResponse(payload)
+                    .then(payload => {
+                        let jsonText = payload.getDataUtf8();
+                        if (jsonText) {
+                            return JSON.parse(jsonText);
+                        }
+                        return undefined;
+                    });
+            }
+        }
+    };
+    return new Proxy({}, handler);
 }
