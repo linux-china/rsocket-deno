@@ -53,6 +53,14 @@ let response = await rsocket.requestResponse(Payload.fromText("hello", "metadata
 console.log(response.getDataUtf8())
 ```
 
+## Service Routing
+
+Please refer rsocket_server_service_collection.ts under tests/server
+
+## Interoperate with Spring Boot RSocket
+
+Please refer springRSocket_test.ts under tests/requester
+
 ## TODO
 
 #### RSocket
