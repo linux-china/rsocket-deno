@@ -119,7 +119,8 @@ export class RSocketRequester implements RSocket {
                         let response = await this._responder.requestResponse(requestResponseFrame.payload)
                         await this._connection.write(encodePayloadFrame(header.streamId, true, response))
                     } catch (e) {
-                        await this._connection.write(encodeErrorFrame(header.streamId, APPLICATION_ERROR, e.toString()))
+                        let rsocketError = convertToRSocketError(e);
+                        await this._connection.write(encodeErrorFrame(header.streamId, rsocketError.code, rsocketError.message));
                     }
                 }
                 break;
@@ -150,7 +151,8 @@ export class RSocketRequester implements RSocket {
                             },
 
                             onError: (error: any) => {
-                                this._connection.write(encodeErrorFrame(requesterStreamId, APPLICATION_ERROR, error.toString())).then();
+                                let rsocketError = convertToRSocketError(error);
+                                this._connection.write(encodeErrorFrame(requesterStreamId, rsocketError.code, rsocketError.message)).then();
                             },
 
                             onComplete: () => {
@@ -277,6 +279,16 @@ export class RSocketRequester implements RSocket {
         return encodeSetupFrame(this._connectionSetupPayload.keepAliveInterval * 1000, this._connectionSetupPayload.keepAliveMaxLifetime * 1000,
             this._connectionSetupPayload.metadataMimeType, this._connectionSetupPayload.dataMimeType,
             this._connectionSetupPayload)
+    }
+}
+
+function convertToRSocketError(e: any): RSocketError {
+    if (e == null) {
+        return new RSocketError(APPLICATION_ERROR, "Error")
+    } else if (typeof e === 'object' && e.code && e.message) {
+        return e as RSocketError;
+    } else {
+        return new RSocketError(APPLICATION_ERROR, e.toString());
     }
 }
 
