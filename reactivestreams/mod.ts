@@ -25,14 +25,16 @@ export interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
 }
 
 export class ErrorPublisher<T> implements Publisher<T> {
-    private readonly error: string
+    private readonly code: number
+    private readonly error: any
 
-    constructor(error: string) {
+    constructor(code: number, error: string) {
+        this.code = code;
         this.error = error;
     }
 
     subscribe(subscriber: Subscriber<T>): void {
-        subscriber.onError(new Error(this.error))
+        subscriber.onError({code: this.code, message: this.error})
     }
 
 }
