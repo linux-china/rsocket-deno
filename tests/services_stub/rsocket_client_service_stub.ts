@@ -1,5 +1,4 @@
-import {RSocketConnector} from "../../rsocket/RSocketConnector.ts"
-import {buildServiceStub} from "../../rsocket/RSocket.ts";
+import {buildServiceStub, RSocketConnector} from "../../mod.ts";
 
 const rsocket = await RSocketConnector.create().connect("tcp://127.0.0.1:42252");
 

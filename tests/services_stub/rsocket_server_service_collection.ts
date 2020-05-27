@@ -1,9 +1,9 @@
 import {
     RSocketServer,
     RSocket,
-    ConnectionSetupPayload
+    ConnectionSetupPayload,
+    RSocketRouteHandler
 } from "../../mod.ts"
-import {RSocketRouteHandler} from "../../rsocket/RSocket.ts";
 
 //RSocket Service
 class UserService {
