@@ -1,4 +1,4 @@
-import {Payload, RSocketServer, forRequestResponse} from "./mod.ts"
+import {Payload, RSocketServer, forRequestResponse} from "https://deno.land/x/rsocket/mod.ts"
 
 await RSocketServer.create(forRequestResponse(async (payload: Payload): Promise<Payload> => {
     console.log(`Received: ${payload.getDataUtf8()} `)
