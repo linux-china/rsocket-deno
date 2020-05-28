@@ -24,7 +24,7 @@ $ deno run --allow-net rsocket_server.ts
 Server side example:
 
 ```typescript
-import {Payload, RSocketServer, forRequestResponse} from "./mod.ts"
+import {Payload, RSocketServer, forRequestResponse} from "https://deno.land/x/rsocket/mod.ts"
 
 await RSocketServer.create(forRequestResponse(async (payload: Payload): Promise<Payload> => {
     console.log(`Received: ${payload.getDataUtf8()} `)
@@ -44,13 +44,13 @@ $ deno run --allow-net rsocket_client.ts
 Client side example:
 
 ```typescript
-import {RSocketConnector} from "./rsocket/RSocketConnector.ts"
-import {Payload} from "./rsocket/Payload.ts";
+import {RSocketConnector, Payload} from "https://deno.land/x/rsocket/mod.ts"
 
 const rsocket = await RSocketConnector.create().connect("tcp://127.0.0.1:42252");
 
-let response = await rsocket.requestResponse(Payload.fromText("hello", "metadata"));
-console.log(response.getDataUtf8())
+const result: Payload = await rsocket.requestResponse(Payload.fromText("Hello, I'm requester!", "metadata"));
+console.log(result.getDataUtf8());
+
 ```
 
 ## Service Routing for RSocket service side
@@ -61,9 +61,9 @@ For production development, please use RSocket
 import {
     RSocketServer,
     RSocket,
-    ConnectionSetupPayload
-} from "../../mod.ts"
-import {RSocketRouteHandler} from "../../rsocket/RSocket.ts";
+    ConnectionSetupPayload,
+    RSocketRouteHandler
+} from "https://deno.land/x/rsocket/mod.ts"
 
 //RSocket Service
 class UserService {
@@ -85,8 +85,7 @@ const server = await RSocketServer.create({
 You can use TypeScript interface as stub to communicate with remote RSocket service.
 
 ```typescript
-import {RSocketConnector} from "../../rsocket/RSocketConnector.ts"
-import {buildServiceStub} from "../../rsocket/RSocket.ts";
+import {RSocketConnector, buildServiceStub} from "https://deno.land/x/rsocket/mod.ts"
 
 const rsocket = await RSocketConnector.create().connect("tcp://127.0.0.1:42252");
 
@@ -103,7 +102,7 @@ console.log(nick)
 
 ## Interoperate with Spring Boot RSocket
 
-Please refer springRSocket_test.ts under tests/requester
+Please refer [springRSocket_test.ts](https://deno.land/x/rsocket/tests/requester/springRSocket_test.ts)
 
 ## TODO
 
