@@ -24,11 +24,15 @@ $ deno run --allow-net https://deno.land/x/rsocket/rsocket_server.ts
 and RSocket server side code as following: 
 
 ```typescript
-import {Payload, RSocketServer, forRequestResponse} from "https://deno.land/x/rsocket/mod.ts"
+import {
+    RSocketServer,
+    forRequestResponse,
+    Payload
+} from "https://deno.land/x/rsocket/mod.ts"
 
 await RSocketServer.create(forRequestResponse(async (payload: Payload): Promise<Payload> => {
     console.log(`Received: ${payload.getDataUtf8()} `)
-    return Payload.fromText("Hello, this is Deno Server!", "metadata");
+    return Payload.fromText("Hello, this is Deno Server!", "");
 })).bind("tcp://0.0.0.0:42252");
 
 console.log("RSocket Server started on 0.0.0.0:42252")
@@ -43,12 +47,14 @@ $ deno run --allow-net https://deno.land/x/rsocket/rsocket_client.ts
 and RSocket client side code as following: 
 
 ```typescript
-import {RSocketConnector, Payload} from "https://deno.land/x/rsocket/mod.ts"
+import {
+    RSocketConnector,
+    Payload
+} from "https://deno.land/x/rsocket/mod.ts"
 
 const rsocket = await RSocketConnector.create().connect("tcp://127.0.0.1:42252");
 
 const result: Payload = await rsocket.requestResponse(Payload.fromText("Hello, I'm requester!", "metadata"));
-
 console.log(result.getDataUtf8());
 ```
 
