@@ -64,9 +64,7 @@ console.log(result.getDataUtf8());
 
 # Service router and stub
 
-#### Service route for RSocket service side
-
-For production development, please use RSocket
+#### Service route for RSocket server side
 
 ```typescript
 import {
@@ -92,8 +90,6 @@ const server = await RSocketServer.create({
 ```
 
 ### Service stub for requester side
-
-You can use TypeScript interface as stub to communicate with remote RSocket service.
 
 ```typescript
 import {RSocketConnector, buildServiceStub} from "https://deno.land/x/rsocket/mod.ts"
