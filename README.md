@@ -1,7 +1,7 @@
 RSocket Deno module
 ===================
 
-🦕Deno library to create/consume RSocket services.
+🦕Deno library to create/consume async RSocket services.
 
 # What is RSocket?
 
