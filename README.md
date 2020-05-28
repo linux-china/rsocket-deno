@@ -3,7 +3,7 @@ RSocket Deno module
 
 🦕Deno library to create/consume RSocket services.
 
-### What is RSocket?
+# What is RSocket?
 
 RSocket is a binary protocol for use on byte stream transports such as TCP, WebSockets, and Aeron.
 It enables the following symmetric interaction models via async message passing over a single connection:
@@ -13,15 +13,15 @@ It enables the following symmetric interaction models via async message passing 
 * fire-and-forget (no response)
 * channel (bi-directional streams)
 
-### Usage
+# How to use?
 
-* Start RSocket Server with Deno
+### Start RSocket Server with Deno
 
 ```
-$ deno run --allow-net rsocket_server.ts
+$ deno run --allow-net https://deno.land/x/rsocket/rsocket_server.ts
 ```
 
-Server side example:
+and RSocket server side code as following: 
 
 ```typescript
 import {Payload, RSocketServer, forRequestResponse} from "https://deno.land/x/rsocket/mod.ts"
@@ -32,16 +32,15 @@ await RSocketServer.create(forRequestResponse(async (payload: Payload): Promise<
 })).bind("tcp://0.0.0.0:42252");
 
 console.log("RSocket Server started on 0.0.0.0:42252")
-
 ```
 
-* Start RSocket Client to test async RPC call
+### Start RSocket requester to test async RPC call
 
 ```
-$ deno run --allow-net rsocket_client.ts
+$ deno run --allow-net https://deno.land/x/rsocket/rsocket_client.ts
 ```
 
-Client side example:
+and RSocket client side code as following: 
 
 ```typescript
 import {RSocketConnector, Payload} from "https://deno.land/x/rsocket/mod.ts"
@@ -49,11 +48,14 @@ import {RSocketConnector, Payload} from "https://deno.land/x/rsocket/mod.ts"
 const rsocket = await RSocketConnector.create().connect("tcp://127.0.0.1:42252");
 
 const result: Payload = await rsocket.requestResponse(Payload.fromText("Hello, I'm requester!", "metadata"));
-console.log(result.getDataUtf8());
 
+console.log(result.getDataUtf8());
 ```
 
-## Service Routing for RSocket service side
+
+# Service router and stub
+
+#### Service route for RSocket service side
 
 For production development, please use RSocket
 
@@ -80,7 +82,7 @@ const server = await RSocketServer.create({
 }).bind("tcp://127.0.0.1:42252");
 ```
 
-## Service stub for requester side
+### Service stub for requester side
 
 You can use TypeScript interface as stub to communicate with remote RSocket service.
 
@@ -100,11 +102,11 @@ console.log(nick)
 
 ```
 
-## Interoperate with Spring Boot RSocket
+# Interoperate with Spring Boot RSocket
 
 Please refer [springRSocket_test.ts](https://deno.land/x/rsocket/tests/requester/springRSocket_test.ts)
 
-## TODO
+# TODO
 
 #### RSocket
 
@@ -129,12 +131,7 @@ Please refer [springRSocket_test.ts](https://deno.land/x/rsocket/tests/requester
   - [x] Client
   - [x] Server
 
-#### Reactive Streams
-
-* Convert between Publisher and AsyncIterable
-* Convert between Publisher and RxJS 7.0?
-
-## References
+# References
 
 * RSocket: https://rsocket.io/
 * Deno: https://deno.land/
