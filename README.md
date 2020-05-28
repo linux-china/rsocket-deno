@@ -13,6 +13,8 @@ It enables the following symmetric interaction models via async message passing 
 * fire-and-forget (no response)
 * channel (bi-directional streams)
 
+Yes, RSocket is designed for async/reactive communication between services.
+
 # How to use?
 
 ### Start RSocket Server with Deno
