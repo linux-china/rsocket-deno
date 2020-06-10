@@ -147,7 +147,11 @@ export function buildServiceStub<T>(rsocket: RSocket, serviceName: string): T {
             return (...args: any[]) => {
                 let payload = new Payload();
                 if (args) {
-                    payload.data = encode(JSON.stringify(args));
+                    if (args.length == 1) {
+                        payload.data = encode(JSON.stringify(args[0]));
+                    } else {
+                        payload.data = encode(JSON.stringify(args));
+                    }
                 }
                 let compositeMetadata = CompositeMetadata.fromEntries(new RoutingMetadata(`${serviceName}.${methodName}`));
                 payload.metadata = compositeMetadata.toUint8Array();
