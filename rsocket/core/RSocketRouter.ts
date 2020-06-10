@@ -1,5 +1,5 @@
 import {Payload} from "../Payload.ts";
-import {ErrorPublisher, Publisher} from "../../reactivestreams/mod.ts";
+import {ErrorPublisher, Publisher, Subscriber, Subscription} from "../../reactivestreams/mod.ts";
 import {CompositeMetadata, RoutingMetadata} from "../metadata/CompositeMetadata.ts";
 import {MESSAGE_RSOCKET_ROUTING} from "../metadata/WellKnownMimeType.ts";
 import {RSocketError, INVALID} from "./RSocketError.ts";
@@ -155,16 +155,55 @@ export function buildServiceStub<T>(rsocket: RSocket, serviceName: string): T {
                 }
                 let compositeMetadata = CompositeMetadata.fromEntries(new RoutingMetadata(`${serviceName}.${methodName}`));
                 payload.metadata = compositeMetadata.toUint8Array();
-                return rsocket.requestResponse(payload)
-                    .then(payload => {
-                        let jsonText = payload.getDataUtf8();
-                        if (jsonText) {
-                            return JSON.parse(jsonText);
-                        }
-                        return undefined;
-                    });
+                if (methodName.startsWith("findAll") || methodName.startsWith("readAll") || methodName.startsWith("streamAll")) { //stream
+                    return new RSocketPayload2JsonPublisher(rsocket.requestStream(payload));
+                } else if (methodName.startsWith("fire")) {
+                    return rsocket.fireAndForget(payload);
+                } else {
+                    return rsocket.requestResponse(payload)
+                        .then(payload => {
+                            let jsonText = payload.getDataUtf8();
+                            if (jsonText) {
+                                return JSON.parse(jsonText);
+                            }
+                            return undefined;
+                        });
+                }
             }
         }
     };
     return new Proxy({}, handler);
+}
+
+
+class RSocketPayload2JsonPublisher implements Publisher<any> {
+    private delegate: Publisher<Payload>
+
+    constructor(delegate: Publisher<Payload>) {
+        this.delegate = delegate;
+    }
+
+    subscribe(subscriber: Subscriber<any>): void {
+        this.delegate.subscribe(new class implements Subscriber<Payload> {
+            onComplete(): void {
+                subscriber.onComplete();
+            }
+
+            onError(error: any): void {
+                subscriber.onError(error);
+            }
+
+            onNext(payload: Payload): void {
+                let jsonText = payload.getDataUtf8();
+                if (jsonText) {
+                    subscriber.onNext(JSON.parse(jsonText));
+                }
+            }
+
+            onSubscribe(subscription: Subscription): void {
+                subscriber.onSubscribe(subscription);
+            }
+        });
+    }
+
 }
