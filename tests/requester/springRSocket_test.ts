@@ -4,9 +4,9 @@ import {publisherToAsyncIterator} from "../../reactivestreams/mod.ts";
 
 
 // Spring Boot application.properties
-//    spring.rsocket.server.port=42252
-//    spring.rsocket.server.transport=tcp
-const rsocket = await RSocketConnector.create().connect("tcp://127.0.0.1:42252");
+//    spring.rsocket.server.mapping-path=/rsocket
+//    spring.rsocket.server.transport=websocket
+const rsocket = await RSocketConnector.create().connect("ws://127.0.0.1:8080/rsocket");
 
 Deno.test("Spring RSocket RequestResponse", async () => {
     let compositeMetadata = CompositeMetadata.fromEntries(new RoutingMetadata("UserService.findById"))
