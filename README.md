@@ -133,7 +133,7 @@ Please refer [springRSocket_test.ts](https://deno.land/x/rsocket/tests/requester
   - [ ] Lease
 - Transport
   - [x] TCP
-  - [ ] Websocket: working
+  - [x] Websocket
 - High Level APIs
   - [x] Client
   - [x] Server
