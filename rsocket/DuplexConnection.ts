@@ -4,7 +4,7 @@ import {
     isWebSocketPingEvent,
     isWebSocketPongEvent,
     connectWebSocket
-} from "./ws.ts";
+} from "../deps.ts";
 import {ByteBuffer} from "./io/ByteBuffer.ts";
 
 export interface DuplexConnection {
