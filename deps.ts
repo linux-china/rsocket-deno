@@ -8,4 +8,4 @@ export {
     isWebSocketPongEvent
 } from "https://deno.land/std@v0.56.0/ws/mod.ts"
 
-export {Server} from "https://deno.land/std@v0.56.0/http/server.ts";
+export {Server, serve} from "https://deno.land/std@v0.56.0/http/server.ts";
