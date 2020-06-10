@@ -102,8 +102,6 @@ export class RSocketWebSocketResponder implements Deno.Closer {
                     for (const frame of parseFrames(fullFrame)) {
                         let header = frame.header;
                         if (header.type == FrameType.SETUP) {
-                            console.log("frame");
-                            console.log(frame);
                             let setupFrame = frame as SetupFrame
                             let connectSetupPayload = new ConnectionSetupPayload(setupFrame.keepAliveInterval, setupFrame.keepAliveMaxLifetime,
                                 setupFrame.header.flags, setupFrame.metadataMimeType, setupFrame.dataMimeType);
@@ -118,7 +116,6 @@ export class RSocketWebSocketResponder implements Deno.Closer {
                                 rsocketRequester = temp;
                             }
                         } else {
-                            console.log(frame)
                             rsocketRequester?.receiveFrame(frame).then();
                         }
                     }
