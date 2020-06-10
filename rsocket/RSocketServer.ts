@@ -1,7 +1,7 @@
 import Closer = Deno.Closer;
 import {RSocketResponder, RSocketWebSocketResponder} from "./core/RSocketResponder.ts";
 import {SocketAcceptor} from "./SocketAcceptor.ts";
-import {serve} from "https://deno.land/std/http/server.ts";
+import {serve} from "../deps.ts";
 
 export class RSocketServer {
     private readonly _acceptor: SocketAcceptor
