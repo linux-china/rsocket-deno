@@ -4,7 +4,7 @@ import {
     Payload
 } from "https://deno.land/x/rsocket/mod.ts"
 
-const listenUrl = "ws://0.0.0.0:42252";
+const listenUrl = "tcp://0.0.0.0:42252";
 await RSocketServer.create(forRequestResponse(
     async (payload: Payload): Promise<Payload> => {
         console.log(`Received: ${payload.getDataUtf8()} `)
