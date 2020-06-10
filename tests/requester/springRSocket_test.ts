@@ -1,7 +1,6 @@
-import {RSocketConnector, Payload, CompositeMetadata, RoutingMetadata} from "../../mod.ts"
+import {RSocketConnector, Payload, CompositeMetadata, RoutingMetadata, buildServiceStub} from "../../mod.ts"
 import {encode} from "../../deps.ts";
 import {Publisher, publisherToAsyncIterator} from "../../reactivestreams/mod.ts";
-import {buildServiceStub} from "../../mod.ts";
 
 const {test} = Deno;
 
