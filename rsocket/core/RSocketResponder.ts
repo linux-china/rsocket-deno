@@ -5,13 +5,13 @@ import {ConnectionSetupPayload} from "../Payload.ts";
 import {RSocketRequester} from "./RSocketRequester.ts";
 import {StreamIdSupplier} from "./StreamIdSupplier.ts";
 import {DenoTcpDuplexConnection, DenoWebSocketDuplexConnection} from "../DuplexConnection.ts";
-import {Server} from "https://deno.land/std/http/server.ts";
 import {
+    Server,
     acceptWebSocket,
     isWebSocketCloseEvent,
     isWebSocketPingEvent,
     WebSocket,
-} from "https://deno.land/std/ws/mod.ts";
+} from "../../deps.ts";
 import {ByteBuffer} from "../io/ByteBuffer.ts";
 
 export class RSocketResponder implements Deno.Closer {
