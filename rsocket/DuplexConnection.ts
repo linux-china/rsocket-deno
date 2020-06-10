@@ -4,7 +4,8 @@ import {
     isWebSocketPingEvent,
     isWebSocketPongEvent,
     connectWebSocket
-} from "../deps.ts";
+} from "./ws.ts";
+import {ByteBuffer} from "./io/ByteBuffer.ts";
 
 export interface DuplexConnection {
     write(chunk: Uint8Array): Promise<any>;
@@ -65,8 +66,13 @@ export class DenoWebSocketDuplexConnection implements DuplexConnection {
                     // text message
                     console.log("ws:Text", ev);
                 } else { //binary event
-                    console.log("ws:binary");
-                    yield ev as Uint8Array;
+                    let frame = ev as Uint8Array;
+                    //append Frame Length: 3 bytes
+                    let fullFrame = new Uint8Array(frame.length + 3);
+                    let frameLengthArray = ByteBuffer.i24ToByteArray(frame.length);
+                    fullFrame.set(frameLengthArray, 0);
+                    fullFrame.set(frame, 3);
+                    yield fullFrame;
                 }
             }
         } catch (err) {
@@ -78,7 +84,8 @@ export class DenoWebSocketDuplexConnection implements DuplexConnection {
     }
 
     write(chunk: Uint8Array): Promise<void> {
-        return this.ws.send(chunk);
+        //remove frame length: 3 bytes
+        return this.ws.send(chunk.slice(3));
     }
 
 }
