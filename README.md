@@ -109,6 +109,10 @@ console.log(nick)
 
 ```
 
+# WebSocket support
+
+Just use "ws://127.0.0.0:42252" format.
+
 # Interoperate with Spring Boot RSocket
 
 Please refer [springRSocket_test.ts](https://deno.land/x/rsocket/tests/requester/springRSocket_test.ts)
