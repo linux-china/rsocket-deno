@@ -130,7 +130,13 @@ import operators from 'https://dev.jspm.io/rxjs@6.5.5/operators';
 const {map, filter} = operators;
 
 import { publisherToObservable, observableToPublisher } from "https://deno.land/x/rsocket/reactivestreams/rxjs.ts"
+```
 
+or you can use https://deno.land/x/rxjs
+
+```typescript
+import {Observable} from "https://deno.land/x/rxjs/mod.ts";
+import {map, last} from "https://deno.land/x/rxjs/src/operators/index.ts";
 ```
 
 # TODO
