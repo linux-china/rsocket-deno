@@ -66,11 +66,11 @@ export class DefaultQueueProcessor<T> implements Processor<T, T> {
 
 const defer = () => new Promise(resolve => setTimeout(resolve, 0));
 
-export async function* publisherToAsyncIterator<T>(observable: Publisher<T>) {
+export async function* publisherToAsyncIterator<T>(publisher: Publisher<T>) {
     let values: T[] = [];
     let error: any | undefined;
     let done: boolean = false;
-    observable.subscribe({
+    publisher.subscribe({
         onSubscribe: (subscription: Subscription) => void {},
         onNext: (data: T) => values.push(data),
         onError: (err: any) => error = err,
@@ -93,19 +93,23 @@ export async function* publisherToAsyncIterator<T>(observable: Publisher<T>) {
 }
 
 export function iteratorToPublisher<T>(iterator: Iterable<T>): Publisher<T> {
-    let queue = new DefaultQueueProcessor<T>();
-    for (const value of iterator) {
-        queue.onNext(value)
+    return new class implements Publisher<T> {
+        subscribe(subscriber: Subscriber<T>): void {
+            for (const value of iterator) {
+                subscriber.onNext(value)
+            }
+            subscriber.onComplete();
+        }
     }
-    queue.onComplete();
-    return queue;
 }
 
 export async function asyncIteratorToPublisher<T>(iterator: AsyncIterableIterator<T>): Promise<Publisher<T>> {
-    let queue = new DefaultQueueProcessor<T>();
-    for await (const value of iterator) {
-        queue.onNext(value)
+    return new class implements Publisher<T> {
+        subscribe(subscriber: Subscriber<T>): void {
+            for await (const value of iterator) {
+                subscriber.onNext(value)
+            }
+            subscriber.onComplete();
+        }
     }
-    queue.onComplete();
-    return queue;
 }
