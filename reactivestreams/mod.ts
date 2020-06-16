@@ -103,13 +103,16 @@ export function iteratorToPublisher<T>(iterator: Iterable<T>): Publisher<T> {
     }
 }
 
-export async function asyncIteratorToPublisher<T>(iterator: AsyncIterableIterator<T>): Promise<Publisher<T>> {
+export async function asyncIteratorToPublisher<T>(iterator: AsyncIterable<T>): Promise<Publisher<T>> {
     return new class implements Publisher<T> {
         subscribe(subscriber: Subscriber<T>): void {
-            for await (const value of iterator) {
-                subscriber.onNext(value)
-            }
-            subscriber.onComplete();
+            (async function () {
+                for await (const value of iterator) {
+                    subscriber.onNext(value)
+                }
+            })().finally(() => {
+                subscriber.onComplete();
+            });
         }
     }
 }
