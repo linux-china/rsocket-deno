@@ -118,6 +118,21 @@ Just use "ws://127.0.0.0:42252" format.
 * Deno Spring Boot integration: https://github.com/linux-china/rsocket-deno-servic
 * springRSocket_test.ts: https://deno.land/x/rsocket/tests/requester/springRSocket_test.ts
 
+# Reactive streams interoperation with RxJS 
+
+Reactive Streams supplies interoperation with RxJS, such as Publisher to Observable or Observable to Publisher. 
+
+```typescript
+// @deno-types="https://deno.land/x/types/rxjs/v6.5.5/rxjs.d.ts"
+import {Observable, range, of} from "https://cdn.pika.dev/rxjs@6.5.5";
+// @deno-types="https://deno.land/x/types/rxjs/v6.5.5/operators.d.ts"
+import operators from 'https://dev.jspm.io/rxjs@6.5.5/operators';
+const {map, filter} = operators;
+
+import { publisherToObservable, observableToPublisher } from "https://deno.land/x/rsocket/reactivestreams/rxjs.ts"
+
+```
+
 # TODO
 
 #### RSocket
@@ -142,6 +157,8 @@ Just use "ws://127.0.0.0:42252" format.
 - High Level APIs
   - [x] Client
   - [x] Server
+- Misc
+  - [x] RxJS
 
 # References
 
