@@ -103,7 +103,7 @@ export function iteratorToPublisher<T>(iterator: Iterable<T>): Publisher<T> {
     }
 }
 
-export async function asyncIteratorToPublisher<T>(iterator: AsyncIterable<T>): Promise<Publisher<T>> {
+export function asyncIteratorToPublisher<T>(iterator: AsyncIterable<T>): Publisher<T> {
     return new class implements Publisher<T> {
         subscribe(subscriber: Subscriber<T>): void {
             (async function () {
