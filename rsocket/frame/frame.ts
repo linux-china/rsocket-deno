@@ -492,9 +492,11 @@ export function encodePayloadFrame(
     frameBuffer.writeI32(streamId); //stream id
     let flags = 0;
     if (complete) {
-        flags = flags | 0x20; //complete
+        console.log("complete")
+        flags = flags | 0x40; //complete
     } else {
-        flags = flags | 0x10; //next
+        console.log("next")
+        flags = flags | 0x20; //next
     }
     if (payload) {
         writeTFrameTypeAndFlags(frameBuffer, FrameType.PAYLOAD, payload.metadata, flags)
