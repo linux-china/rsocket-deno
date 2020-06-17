@@ -17,7 +17,7 @@ import {
     encodeRequestStreamFrame,
     encodeRequestFNFFrame,
     encodeRequestChannelFrame,
-    encodeMetadataPushFrame, RequestStreamFrame
+    encodeMetadataPushFrame, RequestStreamFrame, CancelFrame
 } from "../frame/frame.ts"
 import {StreamIdSupplier} from "./StreamIdSupplier.ts";
 import {APPLICATION_ERROR, RSocketError} from "./RSocketError.ts";
@@ -141,7 +141,7 @@ export class RSocketRequester implements RSocket {
                     let requesterStreamId = streamFrame.header.streamId;
                     try {
                         let publisher = this._responder.requestStream(streamFrame.payload);
-                        publisher.subscribe({
+                        let subscriber: Subscriber<Payload> = {
                             onSubscribe: (subscription: Subscription) => {
 
                             },
@@ -158,7 +158,8 @@ export class RSocketRequester implements RSocket {
                             onComplete: () => {
                                 this._connection.write(encodePayloadFrame(requesterStreamId, true)).then()
                             }
-                        })
+                        };
+                        publisher.subscribe(subscriber);
                     } catch (e) {
                     }
                 }
@@ -179,7 +180,8 @@ export class RSocketRequester implements RSocket {
                 break;
             }
             case FrameType.CANCEL: {
-                //todo implement cancel
+                let cancelFrame = frame as CancelFrame
+                let requesterStreamId = cancelFrame.header.streamId;
                 break;
             }
         }
