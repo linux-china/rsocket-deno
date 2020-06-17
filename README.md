@@ -144,12 +144,11 @@ import {map, last} from "https://deno.land/x/rxjs/src/operators/index.ts";
 #### RSocket
 
 - Operations
-  - [x] METADATA_PUSH
   - [x] REQUEST_FNF
   - [x] REQUEST_RESPONSE
   - [x] REQUEST_STREAM
   - [x] REQUEST_CHANNEL
-  - [ ] Back Pressure
+  - [x] METADATA_PUSH
 - More Operations
   - [x] Error
   - [ ] Cancel
