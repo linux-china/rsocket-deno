@@ -1,5 +1,4 @@
-// @deno-types="https://deno.land/x/types/rxjs/v6.5.5/rxjs.d.ts"
-import {Observable} from "https://cdn.pika.dev/rxjs@6.5.5";
+import {Observable} from "https://deno.land/x/rxjs/mod.ts";
 
 import {Publisher, Subscriber, Subscription} from "./mod.ts"
 
