@@ -27,12 +27,12 @@ export class RSocketConnector {
     }
 
     public dataMimeType(dataMimeType: string): RSocketConnector {
-        this._dataMimeType = dataMimeType
+        this._dataMimeType = dataMimeType;
         return this;
     }
 
     public metadataMimeType(metadataMimeType: string): RSocketConnector {
-        this._metadataMimeType = metadataMimeType
+        this._metadataMimeType = metadataMimeType;
         return this;
     }
 
