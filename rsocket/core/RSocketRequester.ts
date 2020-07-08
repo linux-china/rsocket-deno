@@ -28,14 +28,13 @@ import {DuplexConnection} from "../DuplexConnection.ts";
 const MAX_REQUEST_NUMBER = 0x7fffffff;
 
 export class RSocketRequester implements RSocket {
-    private _closed: boolean = false;
+    private _closed = false;
     private _keepAliveInterval: number | undefined;
     private _streamIdSupplier: StreamIdSupplier;
     private readonly _connectionSetupPayload: ConnectionSetupPayload;
     private readonly _connection: DuplexConnection;
     private senders: Map<number, Subscriber<Payload>> = new Map()
     private _responder: RSocket | undefined;
-    private receivers: Map<number, any> = new Map();
     private _errorConsumer: ((error: RSocketError) => void) | undefined;
     private readonly _mode: string = "requester"; //ort responder
 

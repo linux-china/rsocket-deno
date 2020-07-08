@@ -1,8 +1,8 @@
 export class ByteBuffer {
     private _data: Array<number> = [];
-    private _readerIndex: number = 0;
-    private _writerIndex: number = 0;
-    private _capacity: number = 0;
+    private _readerIndex = 0;
+    private _writerIndex = 0;
+    private _capacity = 0;
 
     public static fromArray(array: Array<number>): ByteBuffer {
         let byteBuffer = new ByteBuffer();

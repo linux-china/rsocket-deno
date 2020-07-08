@@ -17,7 +17,7 @@ export interface DuplexConnection {
 
 export class DenoTcpDuplexConnection implements DuplexConnection {
     conn: Deno.Conn
-    _closed: boolean = false;
+    _closed = false;
 
     constructor(conn: Deno.Conn) {
         this.conn = conn;

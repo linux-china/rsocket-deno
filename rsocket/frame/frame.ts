@@ -29,11 +29,11 @@ export enum FrameType {
 //========== decode ==============
 
 export class RSocketHeader {
-    frameLength: number = 0;
-    streamId: number = 0;
-    type: number = 0;
-    flags: number = 0
-    metaPresent: boolean = false
+    frameLength = 0;
+    streamId = 0;
+    type = 0;
+    flags = 0
+    metaPresent = false
 
     constructor(buffer: ByteBuffer) {
         let frameLength = buffer.readI24();
@@ -60,10 +60,10 @@ export class RSocketHeader {
 export class SetupFrame {
     header: RSocketHeader;
     payload?: Payload;
-    metadataMimeType: string = "message/x.rsocket.composite-metadata.v0";
-    dataMimeType: string = "application/octet-stream";
-    keepAliveInterval: number = 20;
-    keepAliveMaxLifetime: number = 90;
+    metadataMimeType = "message/x.rsocket.composite-metadata.v0";
+    dataMimeType = "application/octet-stream";
+    keepAliveInterval = 20;
+    keepAliveMaxLifetime = 90;
     resumeToken?: string
     leaseEnable: boolean
 
@@ -112,8 +112,8 @@ export class SetupFrame {
 
 export class LeaseFrame {
     header: RSocketHeader;
-    timeToLive: number = 0;
-    numberOfRequests: number = 0;
+    timeToLive = 0;
+    numberOfRequests = 0;
     payload?: Payload
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
@@ -132,9 +132,9 @@ export class LeaseFrame {
 
 export class KeepAliveFrame {
     header: RSocketHeader;
-    lastReceivedPosition: number = 0;
+    lastReceivedPosition = 0;
     payload?: Payload
-    respond: boolean = false;
+    respond = false;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -222,7 +222,7 @@ export class CancelFrame {
 export class PayloadFrame {
     header: RSocketHeader;
     payload?: Payload
-    completed: boolean = false;
+    completed = false;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -235,8 +235,8 @@ export class PayloadFrame {
 
 export class ErrorFrame {
     header: RSocketHeader;
-    code: number = 0;
-    message: string = ""
+    code = 0;
+    message = ""
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;

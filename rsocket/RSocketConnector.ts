@@ -9,10 +9,10 @@ import {connectRSocket} from "./DuplexConnection.ts";
 
 export class RSocketConnector {
     private _payload: Payload | undefined
-    private _keepAliveInterval: number = 20;
-    private _keepAliveMaxLifeTime: number = 90;
-    private _dataMimeType: string = "application/json"
-    private _metadataMimeType: string = "message/x.rsocket.composite-metadata.v0"
+    private _keepAliveInterval = 20;
+    private _keepAliveMaxLifeTime = 90;
+    private _dataMimeType = "application/json"
+    private _metadataMimeType = "message/x.rsocket.composite-metadata.v0"
     private _rsocketRequester: RSocketRequester | undefined;
     private _acceptor: SocketAcceptor | undefined;
     private _errorConsumer: ((error: RSocketError) => void) | undefined;
