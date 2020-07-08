@@ -80,7 +80,7 @@ export class RSocketConnector {
                             break;
                         } else {
                             for (const frame of parseFrames(chunk)) {
-                                this._rsocketRequester?.receiveFrame(frame).then()
+                                this._rsocketRequester?.receiveFrame(frame).then();
                             }
                         }
                     }

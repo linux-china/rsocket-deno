@@ -27,20 +27,20 @@ export class Payload {
 
     getMetadataUtf8(): string | undefined {
         if (this._metadata) {
-            return decode(this._metadata)
+            return decode(this._metadata);
         }
         return undefined;
     }
 
     getDataUtf8(): string | undefined {
         if (this._data) {
-            return decode(this._data)
+            return decode(this._data);
         }
         return undefined;
     }
 
     public static fromText(data: string, metadata: string): Payload {
-        return new Payload(encode(data), encode(metadata))
+        return new Payload(encode(data), encode(metadata));
     }
 }
 
