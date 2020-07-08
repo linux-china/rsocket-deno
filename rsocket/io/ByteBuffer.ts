@@ -84,7 +84,7 @@ export class ByteBuffer {
     }
 
     public writeI8(value: number) {
-        this._data[this._writerIndex] = value
+        this._data[this._writerIndex] = value;
         this._writerIndex += 1;
         this.autoGrow();
     }
