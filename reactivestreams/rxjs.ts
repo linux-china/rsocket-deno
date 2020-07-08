@@ -2,7 +2,6 @@ import {Observable} from "https://deno.land/x/rxjs/mod.ts";
 
 import {Publisher, Subscriber, Subscription} from "./mod.ts"
 
-// @ts-ignore
 export function publisherToObservable<T>(publisher: Publisher<T>): Observable<T> {
     return new Observable((subscriber: any) => {
         publisher.subscribe({
@@ -14,7 +13,6 @@ export function publisherToObservable<T>(publisher: Publisher<T>): Observable<T>
     });
 }
 
-// @ts-ignore
 export function observableToPublisher<T>(observable: Observable<T>): Publisher<T> {
     return new class implements Publisher<T> {
         subscribe(subscriber: Subscriber<T>): void {
