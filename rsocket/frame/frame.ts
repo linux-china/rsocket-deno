@@ -398,7 +398,7 @@ export function encodeRequestResponseFrame(
     let frameBuffer = ByteBuffer.alloc(9);
     frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
-    writeTFrameTypeAndFlags(frameBuffer, FrameType.REQUEST_RESPONSE, payload.metadata, 0)
+    writeTFrameTypeAndFlags(frameBuffer, FrameType.REQUEST_RESPONSE, payload.metadata, 0);
     writePayload(frameBuffer, payload);
     refillFrameLength(frameBuffer);
     return frameBuffer.toUint8Array();
