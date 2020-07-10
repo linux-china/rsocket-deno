@@ -8,11 +8,11 @@ import {parseFrames} from "./frame/frame.ts";
 import {connectRSocket} from "./DuplexConnection.ts";
 
 export class RSocketConnector {
-    private _payload: Payload | undefined
+    private _payload: Payload | undefined;
     private _keepAliveInterval = 20;
     private _keepAliveMaxLifeTime = 90;
-    private _dataMimeType = "application/json"
-    private _metadataMimeType = "message/x.rsocket.composite-metadata.v0"
+    private _dataMimeType = "application/json";
+    private _metadataMimeType = "message/x.rsocket.composite-metadata.v0";
     private _rsocketRequester: RSocketRequester | undefined;
     private _acceptor: SocketAcceptor | undefined;
     private _errorConsumer: ((error: RSocketError) => void) | undefined;
@@ -60,8 +60,8 @@ export class RSocketConnector {
         let streamIdSupplier = StreamIdSupplier.clientSupplier();
         let connectionSetupPayload = new ConnectionSetupPayload(this._keepAliveInterval, this._keepAliveMaxLifeTime, 0, this._metadataMimeType, this._dataMimeType)
         if (this._payload) {
-            connectionSetupPayload.data = this._payload.data
-            connectionSetupPayload.metadata = this._payload.metadata
+            connectionSetupPayload.data = this._payload.data;
+            connectionSetupPayload.metadata = this._payload.metadata;
         }
         this._rsocketRequester = new RSocketRequester(duplexConn, connectionSetupPayload, streamIdSupplier, "requester");
         if (this._errorConsumer) {

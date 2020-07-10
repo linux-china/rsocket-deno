@@ -80,7 +80,7 @@ export class CompositeMetadata {
                     if (dataLength) {
                         let content = buffer.readUint8Array(dataLength);
                         if (content) {
-                            yield new WellKnownMimeTypeEntry(content, wellKnownMimeType)
+                            yield new WellKnownMimeTypeEntry(content, wellKnownMimeType);
                         }
                     }
                 } else {
@@ -91,7 +91,7 @@ export class CompositeMetadata {
                             let content = buffer.readUint8Array(dataLength);
                             if (content) {
                                 let mimeType = decode(mimeTypeU8Array);
-                                yield new ExplicitMimeTypeEntry(content, mimeType)
+                                yield new ExplicitMimeTypeEntry(content, mimeType);
                             }
                         }
                     }
@@ -102,9 +102,9 @@ export class CompositeMetadata {
 
     public findEntry(type: string): MetadataEntry | undefined {
         if (this._map == undefined) {
-            this._map = new Map<string, MetadataEntry>()
+            this._map = new Map<string, MetadataEntry>();
             for (const entry of this) {
-                this._map.set(entry.getMimeType(), entry)
+                this._map.set(entry.getMimeType(), entry);
             }
         }
         return this._map.get(type);
@@ -227,11 +227,11 @@ export class TaggingMetadata implements MetadataEntry {
             if (tagLength) {
                 let u8Array = buffer.readUint8Array(tagLength);
                 if (u8Array) {
-                    tags[tags.length] = decode(u8Array)
+                    tags[tags.length] = decode(u8Array);
                 }
             }
         }
-        return new TaggingMetadata(entry.getMimeType(), tags)
+        return new TaggingMetadata(entry.getMimeType(), tags);
     }
 }
 
@@ -242,7 +242,7 @@ export class RoutingMetadata extends TaggingMetadata {
     constructor(routingKey: string, extraTags?: string[]) {
         let tags = [routingKey]
         if (extraTags) {
-            tags.push(...extraTags)
+            tags.push(...extraTags);
         }
         super(MESSAGE_RSOCKET_ROUTING.mimeType, tags);
         this.routingKey = routingKey;
@@ -253,9 +253,9 @@ export class RoutingMetadata extends TaggingMetadata {
         let taggingMetadata = TaggingMetadata.fromEntry(entry);
         let tags = taggingMetadata.tags;
         if (tags.length == 0) {
-            return new RoutingMetadata(tags[0])
+            return new RoutingMetadata(tags[0]);
         } else {
-            return new RoutingMetadata(tags[0], tags.slice(1, tags.length))
+            return new RoutingMetadata(tags[0], tags.slice(1, tags.length));
         }
     }
 }
@@ -283,7 +283,7 @@ export class AuthMetadata implements MetadataEntry {
     }
 
     public static jwt(jwtToken: string): AuthMetadata {
-        return new AuthMetadata(0x01, encode(jwtToken))
+        return new AuthMetadata(0x01, encode(jwtToken));
     }
 
     public static simple(username: string, password: string): AuthMetadata {
@@ -330,7 +330,7 @@ export class MessageMimeTypeMetadata implements MetadataEntry {
 
 export class MessageAcceptMimeTypesMetadata implements MetadataEntry {
     mimeType: string;
-    acceptMimeTypes: string[]
+    acceptMimeTypes: string[];
 
     constructor(acceptMimeTypes: string[]) {
         this.mimeType = MESSAGE_RSOCKET_ACCEPT_MIMETYPES.mimeType;
@@ -365,7 +365,7 @@ export class ZipkinTracingMetadata implements MetadataEntry {
     spanId: number;
     traceIdHigh: number | undefined;
     traceIdLow: number;
-    parentId: number | undefined
+    parentId: number | undefined;
 
 
     constructor(flags: number, spanId: number, traceIdHigh: number | undefined, traceIdLow: number, parentId: number | undefined) {

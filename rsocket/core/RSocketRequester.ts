@@ -33,7 +33,7 @@ export class RSocketRequester implements RSocket {
     private _streamIdSupplier: StreamIdSupplier;
     private readonly _connectionSetupPayload: ConnectionSetupPayload;
     private readonly _connection: DuplexConnection;
-    private senders: Map<number, Subscriber<Payload>> = new Map()
+    private senders: Map<number, Subscriber<Payload>> = new Map();
     private _responder: RSocket | undefined;
     private _errorConsumer: ((error: RSocketError) => void) | undefined;
     private readonly _mode: string = "requester"; //ort responder
@@ -58,7 +58,7 @@ export class RSocketRequester implements RSocket {
         if (this._mode === 'requester') {
             this._keepAliveInterval = setInterval(() => {
                 if (!this._closed) {
-                    this._connection.write(encodeKeepAlive(false, 0)).then()
+                    this._connection.write(encodeKeepAlive(false, 0)).then();
                 } else {
                     clearInterval(this._keepAliveInterval);
                 }
@@ -90,14 +90,14 @@ export class RSocketRequester implements RSocket {
                 break;
             }
             case FrameType.KEEPALIVE: {
-                let keepAliveFrame = frame as KeepAliveFrame
+                let keepAliveFrame = frame as KeepAliveFrame;
                 if (keepAliveFrame.respond) {
-                    await this._connection.write(encodeKeepAlive(false, keepAliveFrame.lastReceivedPosition))
+                    await this._connection.write(encodeKeepAlive(false, keepAliveFrame.lastReceivedPosition));
                 }
                 break;
             }
             case FrameType.ERROR: {
-                let errorFrame = frame as ErrorFrame
+                let errorFrame = frame as ErrorFrame;
                 let streamId = header.streamId;
                 let error = new RSocketError(errorFrame.code, errorFrame.message)
                 if (streamId == 0 && this._errorConsumer) {
@@ -105,18 +105,18 @@ export class RSocketRequester implements RSocket {
                 } else {
                     let subscriber = this.senders.get(streamId);
                     if (subscriber) {
-                        this.senders.delete(streamId)
+                        this.senders.delete(streamId);
                         subscriber.onError(error);
                     }
                 }
                 break;
             }
             case FrameType.REQUEST_RESPONSE: {
-                let requestResponseFrame = frame as RequestResponseFrame
+                let requestResponseFrame = frame as RequestResponseFrame;
                 if (this._responder && requestResponseFrame.payload) {
                     try {
                         let response = await this._responder.requestResponse(requestResponseFrame.payload)
-                        await this._connection.write(encodePayloadFrame(header.streamId, true, response))
+                        await this._connection.write(encodePayloadFrame(header.streamId, true, response));
                     } catch (e) {
                         let rsocketError = convertToRSocketError(e);
                         await this._connection.write(encodeErrorFrame(header.streamId, rsocketError.code, rsocketError.message));
@@ -125,17 +125,17 @@ export class RSocketRequester implements RSocket {
                 break;
             }
             case FrameType.REQUEST_FNF: {
-                let requestFNFFrame = frame as RequestFNFFrame
+                let requestFNFFrame = frame as RequestFNFFrame;
                 if (this._responder && requestFNFFrame.payload) {
                     try {
-                        await this._responder.fireAndForget(requestFNFFrame.payload)
+                        await this._responder.fireAndForget(requestFNFFrame.payload);
                     } catch (e) {
                     }
                 }
                 break;
             }
             case FrameType.REQUEST_STREAM: {
-                let streamFrame = frame as RequestStreamFrame
+                let streamFrame = frame as RequestStreamFrame;
                 if (this._responder && streamFrame.payload) {
                     let requesterStreamId = streamFrame.header.streamId;
                     try {
@@ -155,7 +155,7 @@ export class RSocketRequester implements RSocket {
                             },
 
                             onComplete: () => {
-                                this._connection.write(encodePayloadFrame(requesterStreamId, true)).then()
+                                this._connection.write(encodePayloadFrame(requesterStreamId, true)).then();
                             }
                         };
                         publisher.subscribe(subscriber);
@@ -165,10 +165,10 @@ export class RSocketRequester implements RSocket {
                 break;
             }
             case FrameType.METADATA_PUSH: {
-                let metadataPushFrame = frame as MetadataPushFrame
+                let metadataPushFrame = frame as MetadataPushFrame;
                 if (this._responder && metadataPushFrame.payload) {
                     try {
-                        await this._responder.metadataPush(metadataPushFrame.payload)
+                        await this._responder.metadataPush(metadataPushFrame.payload);
                     } catch (e) {
                     }
                 }
@@ -179,7 +179,7 @@ export class RSocketRequester implements RSocket {
                 break;
             }
             case FrameType.CANCEL: {
-                let cancelFrame = frame as CancelFrame
+                let cancelFrame = frame as CancelFrame;
                 let requesterStreamId = cancelFrame.header.streamId;
                 break;
             }
@@ -192,11 +192,11 @@ export class RSocketRequester implements RSocket {
 
     async fireAndForget(payload: Payload) {
         let streamId = this._streamIdSupplier.nextStreamId(this.senders)
-        await this._connection.write(encodeRequestFNFFrame(streamId, payload))
+        await this._connection.write(encodeRequestFNFFrame(streamId, payload));
     }
 
     async metadataPush(payload: Payload) {
-        await this._connection.write(encodeMetadataPushFrame(payload))
+        await this._connection.write(encodeMetadataPushFrame(payload));
     }
 
     requestChannel(payloads: Publisher<Payload>): Publisher<Payload> {
@@ -219,16 +219,16 @@ export class RSocketRequester implements RSocket {
                     },
 
                     onNext: (payload: Payload) => {
-                        this._connection.write(encodePayloadFrame(streamId, false, payload)).then()
+                        this._connection.write(encodePayloadFrame(streamId, false, payload)).then();
                     },
 
                     onError: (error: any) => {
                         let rsocketError = convertToRSocketError(error);
-                        this._connection.write(encodeErrorFrame(streamId, rsocketError.code, rsocketError.message)).then()
+                        this._connection.write(encodeErrorFrame(streamId, rsocketError.code, rsocketError.message)).then();
                     },
 
                     onComplete: () => {
-                        this._connection.write(encodePayloadFrame(streamId, true)).then()
+                        this._connection.write(encodePayloadFrame(streamId, true)).then();
                     }
                 });
             });
@@ -238,7 +238,7 @@ export class RSocketRequester implements RSocket {
 
     requestResponse(payload: Payload): Promise<Payload> {
         return new Promise<Payload>((resolve, reject) => {
-            let streamId = this._streamIdSupplier.nextStreamId(this.senders)
+            let streamId = this._streamIdSupplier.nextStreamId(this.senders);
             this._connection.write(encodeRequestResponseFrame(streamId, payload)).then(() => {
                 this.senders.set(streamId, payloadSubscriberFromPromise(resolve, reject));
             });
@@ -271,7 +271,7 @@ export class RSocketRequester implements RSocket {
             clearInterval(this._keepAliveInterval);
         }
         try {
-            this._connection.close()
+            this._connection.close();
         } catch (e) {
 
         }
@@ -280,13 +280,13 @@ export class RSocketRequester implements RSocket {
     private setupPayloadFrame(): Uint8Array {
         return encodeSetupFrame(this._connectionSetupPayload.keepAliveInterval * 1000, this._connectionSetupPayload.keepAliveMaxLifetime * 1000,
             this._connectionSetupPayload.metadataMimeType, this._connectionSetupPayload.dataMimeType,
-            this._connectionSetupPayload)
+            this._connectionSetupPayload);
     }
 }
 
 function convertToRSocketError(e: any): RSocketError {
     if (e == null) {
-        return new RSocketError(APPLICATION_ERROR, "Error")
+        return new RSocketError(APPLICATION_ERROR, "Error");
     } else if (typeof e === 'object' && e.code && e.message) {
         return e as RSocketError;
     } else {
@@ -312,7 +312,7 @@ function payloadSubscriberFromPromise(resolve: any, reject: any): Subscriber<Pay
         onComplete: () => {
             resolve(null);
         }
-    }
+    };
 
 }
 
@@ -329,8 +329,8 @@ class RSocketStreamQueueProcessor extends DefaultQueueProcessor<Payload> {
     }
 
     subscribe(subscriber: Subscriber<Payload>): void {
-        super.subscribe(subscriber)
-        this.subscribeCallback()
+        super.subscribe(subscriber);
+        this.subscribeCallback();
     }
 
 }

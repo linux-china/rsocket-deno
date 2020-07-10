@@ -69,7 +69,7 @@ export class RSocketRouteHandler implements RSocket {
                 let serviceHandler = this.getServiceHandler(routing.service, routing.method);
                 if (serviceHandler) {
                     return serviceHandler(...params).then((result: any) => {
-                        return Payload.fromText(JSON.stringify(result), "")
+                        return Payload.fromText(JSON.stringify(result), "");
                     })
                 }
             }
@@ -96,7 +96,7 @@ export class RSocketRouteHandler implements RSocket {
                 let serviceHandler = this.getServiceHandler(routing.service, routing.method);
                 if (serviceHandler) {
                     return serviceHandler(...params).then((result: any) => {
-                        return Payload.fromText(JSON.stringify(result), "")
+                        return Payload.fromText(JSON.stringify(result), "");
                     })
                 }
             }
@@ -105,7 +105,7 @@ export class RSocketRouteHandler implements RSocket {
     }
 
     requestChannel(payloads: Publisher<Payload>): Publisher<Payload> {
-        return new ErrorPublisher<Payload>(INVALID, "Not implemented")
+        return new ErrorPublisher<Payload>(INVALID, "Not implemented");
     }
 
     metadataPush(payload: Payload): Promise<void> {
@@ -177,7 +177,7 @@ export function buildServiceStub<T>(rsocket: RSocket, serviceName: string): T {
 
 
 class RSocketPayload2JsonPublisher implements Publisher<any> {
-    private delegate: Publisher<Payload>
+    private delegate: Publisher<Payload>;
 
     constructor(delegate: Publisher<Payload>) {
         this.delegate = delegate;

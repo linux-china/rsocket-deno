@@ -62,7 +62,7 @@ export class AbstractRSocket implements RSocket {
     }
 
     public requestChannel(payloads: Publisher<Payload>): Publisher<Payload> {
-        return new ErrorPublisher<Payload>(INVALID, "Not implemented")
+        return new ErrorPublisher<Payload>(INVALID, "Not implemented");
     }
 
     public requestResponse(payload: Payload): Promise<Payload> {
@@ -70,6 +70,6 @@ export class AbstractRSocket implements RSocket {
     }
 
     public requestStream(payload: Payload): Publisher<Payload> {
-        return new ErrorPublisher<Payload>(INVALID, "Not implemented")
+        return new ErrorPublisher<Payload>(INVALID, "Not implemented");
     }
 }

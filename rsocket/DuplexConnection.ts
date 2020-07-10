@@ -16,7 +16,7 @@ export interface DuplexConnection {
 }
 
 export class DenoTcpDuplexConnection implements DuplexConnection {
-    conn: Deno.Conn
+    conn: Deno.Conn;
     _closed = false;
 
     constructor(conn: Deno.Conn) {
@@ -48,7 +48,7 @@ export class DenoWebSocketDuplexConnection implements DuplexConnection {
     }
 
     close(): void {
-        this.ws.close().catch(console.error)
+        this.ws.close().catch(console.error);
     }
 
     async* receive(): AsyncIterableIterator<Uint8Array> {
@@ -92,14 +92,14 @@ export class DenoWebSocketDuplexConnection implements DuplexConnection {
 
 export async function connectRSocket(url: string): Promise<DuplexConnection | undefined> {
     let schema = url.substring(0, url.indexOf(":"))
-    let urlObj = new URL(url.replace(schema + "://", "http://"))
+    let urlObj = new URL(url.replace(schema + "://", "http://"));
     let duplexConn: DuplexConnection | undefined;
     if (schema === 'tcp') {
-        const tcpConn = await Deno.connect({hostname: urlObj.hostname, port: parseInt(urlObj.port)})
+        const tcpConn = await Deno.connect({hostname: urlObj.hostname, port: parseInt(urlObj.port)});
         duplexConn = new DenoTcpDuplexConnection(tcpConn);
     } else if (schema == "ws" || schema == "wss") {
         const websocket = await connectWebSocket(url);
-        duplexConn = new DenoWebSocketDuplexConnection(websocket)
+        duplexConn = new DenoWebSocketDuplexConnection(websocket);
     }
     return duplexConn;
 }
