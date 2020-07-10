@@ -32,8 +32,8 @@ export class RSocketHeader {
     frameLength = 0;
     streamId = 0;
     type = 0;
-    flags = 0
-    metaPresent = false
+    flags = 0;
+    metaPresent = false;
 
     constructor(buffer: ByteBuffer) {
         let frameLength = buffer.readI24();
@@ -64,8 +64,8 @@ export class SetupFrame {
     dataMimeType = "application/octet-stream";
     keepAliveInterval = 20;
     keepAliveMaxLifetime = 90;
-    resumeToken?: string
-    leaseEnable: boolean
+    resumeToken?: string;
+    leaseEnable: boolean;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -114,7 +114,7 @@ export class LeaseFrame {
     header: RSocketHeader;
     timeToLive = 0;
     numberOfRequests = 0;
-    payload?: Payload
+    payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -133,7 +133,7 @@ export class LeaseFrame {
 export class KeepAliveFrame {
     header: RSocketHeader;
     lastReceivedPosition = 0;
-    payload?: Payload
+    payload?: Payload;
     respond = false;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
@@ -151,7 +151,7 @@ export class KeepAliveFrame {
 
 export class RequestResponseFrame {
     header: RSocketHeader;
-    payload?: Payload
+    payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -163,7 +163,7 @@ export class RequestResponseFrame {
 
 export class RequestFNFFrame {
     header: RSocketHeader;
-    payload?: Payload
+    payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -176,7 +176,7 @@ export class RequestFNFFrame {
 export class RequestStreamFrame {
     header: RSocketHeader;
     initialRequestN: number | undefined;
-    payload?: Payload
+    payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -190,7 +190,7 @@ export class RequestStreamFrame {
 export class RequestChannelFrame {
     header: RSocketHeader;
     initialRequestN: number | undefined;
-    payload?: Payload
+    payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -203,7 +203,7 @@ export class RequestChannelFrame {
 
 export class RequestNFrame {
     header: RSocketHeader;
-    initialRequestN: number | undefined
+    initialRequestN: number | undefined;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -221,7 +221,7 @@ export class CancelFrame {
 
 export class PayloadFrame {
     header: RSocketHeader;
-    payload?: Payload
+    payload?: Payload;
     completed = false;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
@@ -236,7 +236,7 @@ export class PayloadFrame {
 export class ErrorFrame {
     header: RSocketHeader;
     code = 0;
-    message = ""
+    message = "";
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -256,7 +256,7 @@ export class ErrorFrame {
 
 export class MetadataPushFrame {
     header: RSocketHeader;
-    payload?: Payload
+    payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
@@ -317,7 +317,7 @@ export function* parseFrames(chunk: Uint8Array) {
             }
             default: {
                 if (header.frameLength && header.frameLength > 9) {
-                    byteBuffer.readBytes(header.frameLength - 9)
+                    byteBuffer.readBytes(header.frameLength - 9);
                 }
                 break;
             }
@@ -352,22 +352,22 @@ export function encodeSetupFrame(
     setupPayload?: Payload
 ): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(21);
-    frameBuffer.writeI24(0) // frame length
+    frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(0); //stream id
     //frame type with metadata indicator without resume token and lease
-    writeTFrameTypeAndFlags(frameBuffer, FrameType.SETUP, setupPayload?.metadata, 0)
+    writeTFrameTypeAndFlags(frameBuffer, FrameType.SETUP, setupPayload?.metadata, 0);
     frameBuffer.writeI16(MAJOR_VERSION);
     frameBuffer.writeI16(MINOR_VERSION);
     frameBuffer.writeI32(keepaliveInterval);
     frameBuffer.writeI32(maxLifetime);
     //Metadata Encoding MIME Type
-    frameBuffer.writeI8(metadataMimeType.length)
-    frameBuffer.writeUint8Array(encode(metadataMimeType))
+    frameBuffer.writeI8(metadataMimeType.length);
+    frameBuffer.writeUint8Array(encode(metadataMimeType));
     //Data Encoding MIME Type
     frameBuffer.writeI8(dataMimeType.length);
-    frameBuffer.writeUint8Array(encode(dataMimeType))
+    frameBuffer.writeUint8Array(encode(dataMimeType));
     // Metadata & Setup Payload
-    writePayload(frameBuffer, setupPayload)
+    writePayload(frameBuffer, setupPayload);
     // refill frame length
     refillFrameLength(frameBuffer);
     return frameBuffer.toUint8Array();
@@ -378,11 +378,11 @@ export function encodeSetupFrame(
 
 export function encodeKeepAlive(respond: boolean, lastPosition: number): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(17);
-    frameBuffer.writeI24(0) // frame length
-    frameBuffer.writeI32(0) //stream id
-    frameBuffer.writeI8(FrameType.KEEPALIVE << 2)
+    frameBuffer.writeI24(0); // frame length
+    frameBuffer.writeI32(0); //stream id
+    frameBuffer.writeI8(FrameType.KEEPALIVE << 2);
     if (respond) {
-        frameBuffer.writeI8(0x80)
+        frameBuffer.writeI8(0x80);
     } else {
         frameBuffer.writeI8(0);
     }
@@ -396,7 +396,7 @@ export function encodeRequestResponseFrame(
     payload: Payload
 ): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(9);
-    frameBuffer.writeI24(0) // frame length
+    frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
     writeTFrameTypeAndFlags(frameBuffer, FrameType.REQUEST_RESPONSE, payload.metadata, 0)
     writePayload(frameBuffer, payload);
@@ -409,9 +409,9 @@ export function encodeRequestFNFFrame(
     payload: Payload
 ): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(9);
-    frameBuffer.writeI24(0) // frame length
+    frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
-    writeTFrameTypeAndFlags(frameBuffer, FrameType.REQUEST_FNF, payload.metadata, 0)
+    writeTFrameTypeAndFlags(frameBuffer, FrameType.REQUEST_FNF, payload.metadata, 0);
     writePayload(frameBuffer, payload);
     refillFrameLength(frameBuffer);
     return frameBuffer.toUint8Array();
@@ -423,9 +423,9 @@ export function encodeRequestStreamFrame(
     payload: Payload
 ): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(13);
-    frameBuffer.writeI24(0) // frame length
+    frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
-    writeTFrameTypeAndFlags(frameBuffer, FrameType.REQUEST_STREAM, payload.metadata, 0)
+    writeTFrameTypeAndFlags(frameBuffer, FrameType.REQUEST_STREAM, payload.metadata, 0);
     frameBuffer.writeI32(initialRequestN);
     writePayload(frameBuffer, payload);
     refillFrameLength(frameBuffer);
@@ -439,7 +439,7 @@ export function encodeRequestChannelFrame(
     payload?: Payload
 ): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(13);
-    frameBuffer.writeI24(0) // frame length
+    frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
     let flags = 0;
     if (complete) {
@@ -462,9 +462,9 @@ export function encodeRequestNFrame(
     requestN: number
 ): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(13);
-    frameBuffer.writeI24(0) // frame length
+    frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
-    frameBuffer.writeI8(FrameType.REQUEST_N << 2)
+    frameBuffer.writeI8(FrameType.REQUEST_N << 2);
     frameBuffer.writeI8(0);
     frameBuffer.writeI32(requestN);
     refillFrameLength(frameBuffer);
@@ -475,9 +475,9 @@ export function encodeCancelFrame(
     streamId: number
 ): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(9);
-    frameBuffer.writeI24(0) // frame length
+    frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
-    frameBuffer.writeI8(FrameType.CANCEL << 2)
+    frameBuffer.writeI8(FrameType.CANCEL << 2);
     frameBuffer.writeI8(0);
     return frameBuffer.toUint8Array();
 }
@@ -488,21 +488,19 @@ export function encodePayloadFrame(
     payload?: Payload
 ): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(9);
-    frameBuffer.writeI24(0) // frame length
+    frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
     let flags = 0;
     if (complete) {
-        console.log("complete")
         flags = flags | 0x40; //complete
     } else {
-        console.log("next")
         flags = flags | 0x20; //next
     }
     if (payload) {
-        writeTFrameTypeAndFlags(frameBuffer, FrameType.PAYLOAD, payload.metadata, flags)
+        writeTFrameTypeAndFlags(frameBuffer, FrameType.PAYLOAD, payload.metadata, flags);
         writePayload(frameBuffer, payload);
     } else {
-        writeTFrameTypeAndFlags(frameBuffer, FrameType.PAYLOAD, undefined, flags)
+        writeTFrameTypeAndFlags(frameBuffer, FrameType.PAYLOAD, undefined, flags);
     }
     refillFrameLength(frameBuffer);
     return frameBuffer.toUint8Array();
@@ -514,9 +512,9 @@ export function encodeErrorFrame(
     message: string
 ): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(9);
-    frameBuffer.writeI24(0) // frame length
+    frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
-    frameBuffer.writeI8(FrameType.ERROR << 2)
+    frameBuffer.writeI8(FrameType.ERROR << 2);
     frameBuffer.writeI8(0);
     frameBuffer.writeI32(code);
     frameBuffer.writeUint8Array(encode(message));
@@ -529,9 +527,9 @@ export function encodeMetadataPushFrame(
 ): Uint8Array {
     if (payload.metadata) {
         let frameBuffer = ByteBuffer.alloc(9);
-        frameBuffer.writeI24(0) // frame length
+        frameBuffer.writeI24(0); // frame length
         frameBuffer.writeI32(0); //stream id
-        frameBuffer.writeI8((FrameType.METADATA_PUSH << 2) | 0x01)
+        frameBuffer.writeI8((FrameType.METADATA_PUSH << 2) | 0x01);
         frameBuffer.writeI8(0);
         frameBuffer.writeUint8Array(payload.metadata);
         refillFrameLength(frameBuffer);
@@ -545,25 +543,25 @@ export function encodeMetadataPushFrame(
 
 function writeTFrameTypeAndFlags(frameBuffer: ByteBuffer, frameType: number, metadata: Uint8Array | undefined, flags: number) {
     if (metadata) {
-        frameBuffer.writeI8(frameType << 2 | 1)
+        frameBuffer.writeI8(frameType << 2 | 1);
     } else {
-        frameBuffer.writeI8(frameType << 2)
+        frameBuffer.writeI8(frameType << 2);
     }
     frameBuffer.writeI8(flags);
 }
 
 function writePayload(frameBuffer: ByteBuffer, payload?: Payload) {
     if (payload?.metadata) {
-        frameBuffer.writeI24(payload.metadata.length)
-        frameBuffer.writeUint8Array(payload.metadata)
+        frameBuffer.writeI24(payload.metadata.length);
+        frameBuffer.writeUint8Array(payload.metadata);
     }
     if (payload?.data) {
-        frameBuffer.writeUint8Array(payload.data)
+        frameBuffer.writeUint8Array(payload.data);
     }
 }
 
 function refillFrameLength(frameBuffer: ByteBuffer) {
     let frameLength = frameBuffer.array().length - 3;
     frameBuffer.resetWriterIndex();
-    frameBuffer.writeI24(frameLength)
+    frameBuffer.writeI24(frameLength);
 }
