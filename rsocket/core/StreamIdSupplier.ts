@@ -1,5 +1,5 @@
 export class StreamIdSupplier {
-    private static MASK = 0x7FFFFFFF
+    private static MASK = 0x7FFFFFFF;
     private streamId: number;
     private readonly initialValue: number;
 
