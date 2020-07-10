@@ -1,9 +1,9 @@
 import {ByteBuffer} from "../io/ByteBuffer.ts";
 import {Payload} from "../Payload.ts";
-import {decode, encode} from "../../deps.ts"
+import {decode, encode} from "../../deps.ts";
 
-const MAJOR_VERSION = 1
-const MINOR_VERSION = 0
+const MAJOR_VERSION = 1;
+const MINOR_VERSION = 0;
 
 const EMPTY_U8_ARRAY = new Uint8Array(0);
 
