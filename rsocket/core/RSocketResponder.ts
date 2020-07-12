@@ -3,7 +3,6 @@ import {SocketAcceptor} from "../SocketAcceptor.ts";
 import {FrameType, SetupFrame} from "../frame/frame.ts";
 import {ConnectionSetupPayload} from "../Payload.ts";
 import {RSocketRequester} from "./RSocketRequester.ts";
-import {StreamIdSupplier} from "./StreamIdSupplier.ts";
 import {DenoTcpDuplexConnection, DenoWebSocketDuplexConnection} from "../DuplexConnection.ts";
 import {
     Server,
@@ -40,7 +39,7 @@ export class RSocketResponder implements Deno.Closer {
                                     let setupFrame = frame as SetupFrame
                                     let connectSetupPayload = new ConnectionSetupPayload(setupFrame.keepAliveInterval, setupFrame.keepAliveMaxLifetime,
                                         setupFrame.header.flags, setupFrame.metadataMimeType, setupFrame.dataMimeType);
-                                    let temp = new RSocketRequester(duplexConn, connectSetupPayload, StreamIdSupplier.serverSupplier(), "responder");
+                                    let temp = new RSocketRequester(duplexConn, connectSetupPayload, "responder");
                                     let responder = this._acceptor.accept(connectSetupPayload, temp);
                                     if (!responder) {
                                         closed = true;
@@ -105,7 +104,7 @@ export class RSocketWebSocketResponder implements Deno.Closer {
                             let setupFrame = frame as SetupFrame
                             let connectSetupPayload = new ConnectionSetupPayload(setupFrame.keepAliveInterval, setupFrame.keepAliveMaxLifetime,
                                 setupFrame.header.flags, setupFrame.metadataMimeType, setupFrame.dataMimeType);
-                            let temp = new RSocketRequester(duplexConn, connectSetupPayload, StreamIdSupplier.serverSupplier(), "responder");
+                            let temp = new RSocketRequester(duplexConn, connectSetupPayload,"responder");
                             let responder = this._acceptor.accept(connectSetupPayload, temp);
                             if (!responder) {
                                 closed = true;

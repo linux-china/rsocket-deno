@@ -1,7 +1,6 @@
 import {ConnectionSetupPayload, Payload} from "./Payload.ts";
 import {RSocketRequester} from "./core/RSocketRequester.ts";
 import {RSocket} from "./RSocket.ts";
-import {StreamIdSupplier} from "./core/StreamIdSupplier.ts";
 import {RSocketError} from "./core/RSocketError.ts";
 import {SocketAcceptor} from "./SocketAcceptor.ts";
 import {parseFrames} from "./frame/frame.ts";
@@ -57,13 +56,12 @@ export class RSocketConnector {
         if (duplexConn === undefined) {
             return Promise.reject(`Failed to create connection with: ${url}`);
         }
-        let streamIdSupplier = StreamIdSupplier.clientSupplier();
         let connectionSetupPayload = new ConnectionSetupPayload(this._keepAliveInterval, this._keepAliveMaxLifeTime, 0, this._metadataMimeType, this._dataMimeType)
         if (this._payload) {
             connectionSetupPayload.data = this._payload.data;
             connectionSetupPayload.metadata = this._payload.metadata;
         }
-        this._rsocketRequester = new RSocketRequester(duplexConn, connectionSetupPayload, streamIdSupplier, "requester");
+        this._rsocketRequester = new RSocketRequester(duplexConn, connectionSetupPayload, "requester");
         if (this._errorConsumer) {
             this._rsocketRequester.errorConsumer = this._errorConsumer;
         }
