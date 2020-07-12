@@ -103,7 +103,7 @@ export class RSocketRequester implements RSocket {
             case FrameType.ERROR: {
                 let errorFrame = frame as ErrorFrame;
                 let streamId = header.streamId;
-                let error = new RSocketError(errorFrame.code, errorFrame.message)
+                let error = new RSocketError(errorFrame.code, errorFrame.message);
                 if (streamId == 0 && this._errorConsumer) {
                     this._errorConsumer(error);
                 } else {
