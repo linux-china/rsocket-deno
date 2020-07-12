@@ -38,11 +38,15 @@ export class RSocketRequester implements RSocket {
     private _errorConsumer: ((error: RSocketError) => void) | undefined;
     private readonly _mode: string = "requester"; //ort responder
 
-    public constructor(connection: DuplexConnection, connectionSetupPayload: ConnectionSetupPayload, streamIdSupplier: StreamIdSupplier, mode: string) {
+    public constructor(connection: DuplexConnection, connectionSetupPayload: ConnectionSetupPayload, mode: string) {
         this._connection = connection;
         this._connectionSetupPayload = connectionSetupPayload;
-        this._streamIdSupplier = streamIdSupplier;
         this._mode = mode;
+        if (this._mode == "requester") {
+            this._streamIdSupplier = StreamIdSupplier.clientSupplier();
+        } else {
+            this._streamIdSupplier = StreamIdSupplier.serverSupplier();
+        }
     }
 
     set errorConsumer(value: ((error: RSocketError) => void) | undefined) {
