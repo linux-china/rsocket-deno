@@ -484,14 +484,14 @@ export function encodeCancelFrame(
 
 export function encodePayloadFrame(
     streamId: number,
-    complete: boolean,
+    completed: boolean,
     payload?: Payload
 ): Uint8Array {
     let frameBuffer = ByteBuffer.alloc(9);
     frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
     let flags = 0;
-    if (complete) {
+    if (completed) {
         flags = flags | 0x40; //complete
     } else {
         flags = flags | 0x20; //next
