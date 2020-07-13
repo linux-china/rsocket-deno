@@ -344,11 +344,11 @@ export class MessageAcceptMimeTypesMetadata implements MetadataEntry {
         let buffer = ByteBuffer.alloc(this.acceptMimeTypes.length * 2)
         for (const acceptMimeType of this.acceptMimeTypes) {
             if (WellKnownMimeType.isWellKnowMimeType(acceptMimeType)) {
-                buffer.writeI8(0x80 | WellKnownMimeType.fromString(acceptMimeType).identifier)
+                buffer.writeI8(0x80 | WellKnownMimeType.fromString(acceptMimeType).identifier);
             } else {
                 let acceptMimeTypeU8Array = encode(acceptMimeType);
                 buffer.writeI8(acceptMimeTypeU8Array.length);
-                buffer.writeUint8Array(acceptMimeTypeU8Array)
+                buffer.writeUint8Array(acceptMimeTypeU8Array);
             }
         }
         return buffer.toUint8Array();
@@ -384,9 +384,9 @@ export class ZipkinTracingMetadata implements MetadataEntry {
         let buffer = ByteBuffer.alloc(9);
         buffer.writeI8(this.flags);
         if (this.traceIdHigh) {
-            buffer.writeI64(this.traceIdHigh)
+            buffer.writeI64(this.traceIdHigh);
         }
-        buffer.writeI64(this.traceIdLow)
+        buffer.writeI64(this.traceIdLow);
         buffer.writeI64(this.spanId);
         if (this.parentId) {
             buffer.writeI64(this.parentId);
