@@ -253,6 +253,8 @@ export class RoutingMetadata extends TaggingMetadata {
         let taggingMetadata = TaggingMetadata.fromEntry(entry);
         let tags = taggingMetadata.tags;
         if (tags.length == 0) {
+            return new RoutingMetadata('');
+        } else if (tags.length == 1) {
             return new RoutingMetadata(tags[0]);
         } else {
             return new RoutingMetadata(tags[0], tags.slice(1, tags.length));
