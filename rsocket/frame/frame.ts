@@ -435,7 +435,6 @@ export function encodeRequestStreamFrame(
 
 export function encodeRequestChannelFrame(
     streamId: number,
-    complete: boolean,
     initialRequestN: number,
     payload?: Payload
 ): Uint8Array {
@@ -443,9 +442,6 @@ export function encodeRequestChannelFrame(
     frameBuffer.writeI24(0); // frame length
     frameBuffer.writeI32(streamId); //stream id
     let flags = 0;
-    if (complete) {
-        flags = 0x40;
-    }
     if (payload) {
         writeTFrameTypeAndFlags(frameBuffer, FrameType.REQUEST_CHANNEL, payload.metadata, flags);
         frameBuffer.writeI32(initialRequestN);
