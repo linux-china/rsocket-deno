@@ -206,7 +206,7 @@ export class RSocketRequester implements RSocket {
     requestChannel(payloads: Publisher<Payload>): Publisher<Payload> {
         let processor = new RSocketStreamQueueProcessor(() => {
             const streamId = this._streamIdSupplier.nextStreamId(this.senders);
-            this._connection.write(encodeRequestChannelFrame(streamId, false, MAX_REQUEST_NUMBER)).then(() => {
+            this._connection.write(encodeRequestChannelFrame(streamId, MAX_REQUEST_NUMBER)).then(() => {
                 this.senders.set(streamId, processor);
                 processor.onSubscribe({
                     request: (n: number) => {
