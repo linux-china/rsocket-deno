@@ -256,12 +256,13 @@ export class ErrorFrame {
 
 export class MetadataPushFrame {
     header: RSocketHeader;
-    metadataBytes?: Uint8Array;
+    payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
         this.header = header;
         if (header && header.frameLength) {
-            this.metadataBytes = buffer.readUint8Array(header.frameLength - 6);
+            let metadataBytes = buffer.readUint8Array(header.frameLength - 6);
+            this.payload = new Payload(undefined, metadataBytes);
         }
     }
 }
