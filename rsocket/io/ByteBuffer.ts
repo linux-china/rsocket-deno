@@ -97,6 +97,10 @@ export class ByteBuffer {
         this.writeBytes(ByteBuffer.i24ToByteArray(value));
     }
 
+    public insertI24(value: number) {
+        this.insertBytes(ByteBuffer.i24ToByteArray(value));
+    }
+
     public writeI32(value: number) {
         this.writeBytes(ByteBuffer.i32ToByteArray(value));
     }
@@ -114,6 +118,15 @@ export class ByteBuffer {
             this.autoGrow();
         }
     }
+
+    public insertBytes(bytes: Array<number>) {
+        if (bytes) {
+            this._data.splice(this._writerIndex, 0, ...bytes);
+            this._writerIndex += bytes.length;
+            this.autoGrow();
+        }
+    }
+
 
     public writeUint8Array(array: Uint8Array) {
         if (array) {
