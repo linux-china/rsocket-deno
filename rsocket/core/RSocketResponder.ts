@@ -36,7 +36,7 @@ export class RSocketResponder implements Deno.Closer {
                             for (const frame of parseFrames(chunk)) {
                                 let header = frame.header;
                                 if (header.type == FrameType.SETUP) {
-                                    let setupFrame = frame as SetupFrame
+                                    let setupFrame = frame as SetupFrame;
                                     let connectSetupPayload = new ConnectionSetupPayload(setupFrame.keepAliveInterval, setupFrame.keepAliveMaxLifetime,
                                         setupFrame.header.flags, setupFrame.metadataMimeType, setupFrame.dataMimeType);
                                     let temp = new RSocketRequester(duplexConn, connectSetupPayload, "responder");
@@ -104,7 +104,7 @@ export class RSocketWebSocketResponder implements Deno.Closer {
                             let setupFrame = frame as SetupFrame
                             let connectSetupPayload = new ConnectionSetupPayload(setupFrame.keepAliveInterval, setupFrame.keepAliveMaxLifetime,
                                 setupFrame.header.flags, setupFrame.metadataMimeType, setupFrame.dataMimeType);
-                            let temp = new RSocketRequester(duplexConn, connectSetupPayload,"responder");
+                            let temp = new RSocketRequester(duplexConn, connectSetupPayload, "responder");
                             let responder = this._acceptor.accept(connectSetupPayload, temp);
                             if (!responder) {
                                 closed = true;
