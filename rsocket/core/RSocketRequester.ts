@@ -1,4 +1,4 @@
-import {RSocket} from "../RSocket.ts";
+import {AbstractRSocket, RSocket} from "../RSocket.ts";
 import {Payload} from "../Payload.ts";
 import {DefaultQueueProcessor, Publisher, Subscriber, Subscription} from "../../reactivestreams/mod.ts"
 import {
@@ -20,12 +20,14 @@ import {
     encodeMetadataPushFrame, RequestStreamFrame, CancelFrame
 } from "../frame/frame.ts"
 import {StreamIdSupplier} from "./StreamIdSupplier.ts";
-import {APPLICATION_ERROR, RSocketError} from "./RSocketError.ts";
+import {APPLICATION_ERROR, INVALID, RSocketError} from "./RSocketError.ts";
 import {ConnectionSetupPayload} from "../Payload.ts";
 import {encodeSetupFrame} from "../frame/frame.ts";
 import {DuplexConnection} from "../DuplexConnection.ts";
 
 const MAX_REQUEST_NUMBER = 0x7fffffff;
+
+const EMPTY_RESPONDER = new AbstractRSocket();
 
 export class RSocketRequester implements RSocket {
     private _closed = false;
@@ -34,7 +36,7 @@ export class RSocketRequester implements RSocket {
     private readonly _connectionSetupPayload: ConnectionSetupPayload;
     private readonly _connection: DuplexConnection;
     private senders: Map<number, Subscriber<Payload>> = new Map();
-    private _responder: RSocket | undefined;
+    private _responder: RSocket = EMPTY_RESPONDER;
     private _errorConsumer: ((error: RSocketError) => void) | undefined;
     private readonly _mode: string = "requester"; //ort responder
 
@@ -54,7 +56,9 @@ export class RSocketRequester implements RSocket {
     }
 
     set responder(value: RSocket | undefined) {
-        this._responder = value;
+        if (value) {
+            this._responder = value;
+        }
     }
 
     public async sendSetupPayload() {
@@ -117,7 +121,7 @@ export class RSocketRequester implements RSocket {
             }
             case FrameType.REQUEST_RESPONSE: {
                 let requestResponseFrame = frame as RequestResponseFrame;
-                if (this._responder && requestResponseFrame.payload) {
+                if (requestResponseFrame.payload) {
                     try {
                         let response = await this._responder.requestResponse(requestResponseFrame.payload)
                         await this._connection.write(encodePayloadFrame(header.streamId, true, response));
@@ -125,12 +129,14 @@ export class RSocketRequester implements RSocket {
                         let rsocketError = convertToRSocketError(e);
                         await this._connection.write(encodeErrorFrame(header.streamId, rsocketError.code, rsocketError.message));
                     }
+                } else {
+                    await this._connection.write(encodeErrorFrame(header.streamId, INVALID, 'Payload is null'));
                 }
                 break;
             }
             case FrameType.REQUEST_FNF: {
                 let requestFNFFrame = frame as RequestFNFFrame;
-                if (this._responder && requestFNFFrame.payload) {
+                if (requestFNFFrame.payload) {
                     try {
                         await this._responder.fireAndForget(requestFNFFrame.payload);
                     } catch (e) {
@@ -140,7 +146,7 @@ export class RSocketRequester implements RSocket {
             }
             case FrameType.REQUEST_STREAM: {
                 let streamFrame = frame as RequestStreamFrame;
-                if (this._responder && streamFrame.payload) {
+                if (streamFrame.payload) {
                     let requesterStreamId = streamFrame.header.streamId;
                     try {
                         let publisher = this._responder.requestStream(streamFrame.payload);
@@ -165,12 +171,14 @@ export class RSocketRequester implements RSocket {
                         publisher.subscribe(subscriber);
                     } catch (e) {
                     }
+                } else {
+                    await this._connection.write(encodeErrorFrame(header.streamId, INVALID, 'Payload is null'));
                 }
                 break;
             }
             case FrameType.METADATA_PUSH: {
                 let metadataPushFrame = frame as MetadataPushFrame;
-                if (this._responder && metadataPushFrame.payload) {
+                if (metadataPushFrame.payload) {
                     try {
                         await this._responder.metadataPush(metadataPushFrame.payload);
                     } catch (e) {
