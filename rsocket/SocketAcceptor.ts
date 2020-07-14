@@ -3,7 +3,7 @@ import {ConnectionSetupPayload, Payload} from "./Payload.ts";
 import {Publisher} from "../reactivestreams/mod.ts";
 
 export interface SocketAcceptor {
-    accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): RSocket
+    accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): RSocket | null
 }
 
 export function forRequestResponse(handler: (payload: Payload) => Promise<Payload>): SocketAcceptor {
