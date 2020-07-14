@@ -1,6 +1,6 @@
 import {ConnectionSetupPayload, Payload} from "./Payload.ts";
 import {RSocketRequester} from "./core/RSocketRequester.ts";
-import {RSocket} from "./RSocket.ts";
+import {AbstractRSocket, RSocket} from "./RSocket.ts";
 import {RSocketError} from "./core/RSocketError.ts";
 import {SocketAcceptor} from "./SocketAcceptor.ts";
 import {parseFrames} from "./frame/frame.ts";
@@ -66,7 +66,11 @@ export class RSocketConnector {
             this._rsocketRequester.errorConsumer = this._errorConsumer;
         }
         if (this._acceptor) {
-            this._rsocketRequester.responder = this._acceptor.accept(connectionSetupPayload, this._rsocketRequester);
+            let responder = this._acceptor.accept(connectionSetupPayload, this._rsocketRequester);
+            if (responder == null) {
+                return Promise.reject('RSOCKET-0x00000003: Connection refused, please check setup and security!');
+            }
+            this._rsocketRequester.responder = responder;
         }
         (async () => {
             let closed = false;
