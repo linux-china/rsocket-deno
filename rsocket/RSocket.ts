@@ -54,22 +54,22 @@ export class AbstractRSocket implements RSocket {
     }
 
     public fireAndForget(payload: Payload): Promise<void> {
-        return Promise.resolve(undefined);
+        return Promise.resolve();
     }
 
     public metadataPush(payload: Payload): Promise<void> {
-        return Promise.reject(new RSocketError(INVALID, "Not implemented"));
+        return Promise.resolve();
     }
 
     public requestChannel(payloads: Publisher<Payload>): Publisher<Payload> {
-        return new ErrorPublisher<Payload>(INVALID, "Not implemented");
+        return new ErrorPublisher<Payload>(INVALID, "Unsupported");
     }
 
     public requestResponse(payload: Payload): Promise<Payload> {
-        return Promise.reject(new RSocketError(INVALID, "Not implemented"));
+        return Promise.reject(new RSocketError(INVALID, "Unsupported"));
     }
 
     public requestStream(payload: Payload): Publisher<Payload> {
-        return new ErrorPublisher<Payload>(INVALID, "Not implemented");
+        return new ErrorPublisher<Payload>(INVALID, "Unsupported");
     }
 }
