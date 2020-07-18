@@ -17,13 +17,19 @@ Yes, RSocket is designed for async/reactive communication between services.
 
 # How to use?
 
+Now RSocket Deno is under active development, please execute following command to make sure all code are updated to last version.
+
+```
+deno run --reload https://deno.land/x/rsocket/mod.ts
+```
+
 ### Start RSocket Server with Deno
 
 ```
 $ deno run --allow-net https://deno.land/x/rsocket/rsocket_server.ts
 ```
 
-and RSocket server side code as following: 
+and RSocket server side code as following:
 
 ```typescript
 import {
@@ -49,7 +55,7 @@ console.log("RSocket Server started on 0.0.0.0:42252")
 $ deno run --allow-net https://deno.land/x/rsocket/rsocket_client.ts
 ```
 
-and RSocket client side code as following: 
+and RSocket client side code as following:
 
 ```typescript
 import {
@@ -118,9 +124,9 @@ Just use "ws://127.0.0.0:42252" format.
 * Deno Spring Boot integration: https://github.com/linux-china/rsocket-deno-servic
 * springRSocket_test.ts: https://deno.land/x/rsocket/tests/requester/springRSocket_test.ts
 
-# Reactive streams interoperation with RxJS 
+# Reactive streams interoperation with RxJS
 
-Reactive Streams supplies interoperation with RxJS, such as Publisher to Observable or Observable to Publisher. 
+Reactive Streams supplies interoperation with RxJS, such as Publisher to Observable or Observable to Publisher.
 
 ```typescript
 // @deno-types="https://deno.land/x/types/rxjs/v6.5.5/rxjs.d.ts"
