@@ -12,7 +12,6 @@ export class RSocketConnector {
     private _keepAliveMaxLifeTime = 90;
     private _dataMimeType = "application/json";
     private _metadataMimeType = "message/x.rsocket.composite-metadata.v0";
-    private _rsocketRequester: RSocketRequester | undefined;
     private _acceptor: SocketAcceptor | undefined;
     private _errorConsumer: ((error: RSocketError) => void) | undefined;
 
@@ -61,16 +60,16 @@ export class RSocketConnector {
             connectionSetupPayload.data = this._payload.data;
             connectionSetupPayload.metadata = this._payload.metadata;
         }
-        this._rsocketRequester = new RSocketRequester(duplexConn, connectionSetupPayload, "requester");
+        let rsocketRequester = new RSocketRequester(duplexConn, connectionSetupPayload, "requester");
         if (this._errorConsumer) {
-            this._rsocketRequester.errorConsumer = this._errorConsumer;
+            rsocketRequester.errorConsumer = this._errorConsumer;
         }
         if (this._acceptor) {
-            let responder = this._acceptor.accept(connectionSetupPayload, this._rsocketRequester);
+            let responder = this._acceptor.accept(connectionSetupPayload, rsocketRequester);
             if (responder == null) {
                 return Promise.reject('RSOCKET-0x00000003: Connection refused, please check setup and security!');
             }
-            this._rsocketRequester.responder = responder;
+            rsocketRequester.responder = responder;
         }
         (async () => {
             let closed = false;
@@ -78,11 +77,11 @@ export class RSocketConnector {
                 try {
                     for await (const chunk of duplexConn.receive()) {
                         if (!chunk) {
-                            duplexConn.close();
+                            rsocketRequester?.close();
                             break;
                         } else {
                             for (const frame of parseFrames(chunk)) {
-                                this._rsocketRequester?.receiveFrame(frame).then();
+                                rsocketRequester?.receiveFrame(frame).then();
                             }
                         }
                     }
@@ -93,8 +92,8 @@ export class RSocketConnector {
                 }
             }
         })().then();
-        await this._rsocketRequester.sendSetupPayload();
-        return this._rsocketRequester;
+        await rsocketRequester.sendSetupPayload();
+        return rsocketRequester;
     }
 
 }
