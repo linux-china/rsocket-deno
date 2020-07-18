@@ -33,24 +33,30 @@ export class RSocketResponder implements Deno.Closer {
                 while (!closed) {
                     try {
                         for await (const chunk of duplexConn.receive()) {
-                            for (const frame of parseFrames(chunk)) {
-                                let header = frame.header;
-                                if (header.type == FrameType.SETUP) {
-                                    let setupFrame = frame as SetupFrame;
-                                    let connectSetupPayload = new ConnectionSetupPayload(setupFrame.keepAliveInterval, setupFrame.keepAliveMaxLifetime,
-                                        setupFrame.header.flags, setupFrame.metadataMimeType, setupFrame.dataMimeType);
-                                    let temp = new RSocketRequester(duplexConn, connectSetupPayload, "responder");
-                                    let responder = this._acceptor.accept(connectSetupPayload, temp);
-                                    if (!responder) {
-                                        closed = true;
-                                        duplexConn.close();
-                                        break;
+                            if (!chunk) {
+                                rsocketRequester?.close();
+                                break;
+                            } else {
+                                // noinspection DuplicatedCode
+                                for (const frame of parseFrames(chunk)) {
+                                    let header = frame.header;
+                                    if (header.type == FrameType.SETUP) {
+                                        let setupFrame = frame as SetupFrame;
+                                        let connectSetupPayload = new ConnectionSetupPayload(setupFrame.keepAliveInterval, setupFrame.keepAliveMaxLifetime,
+                                            setupFrame.header.flags, setupFrame.metadataMimeType, setupFrame.dataMimeType);
+                                        let temp = new RSocketRequester(duplexConn, connectSetupPayload, "responder");
+                                        let responder = this._acceptor.accept(connectSetupPayload, temp);
+                                        if (!responder) {
+                                            closed = true;
+                                            duplexConn.close();
+                                            break;
+                                        } else {
+                                            temp.responder = responder;
+                                            rsocketRequester = temp;
+                                        }
                                     } else {
-                                        temp.responder = responder;
-                                        rsocketRequester = temp;
+                                        rsocketRequester?.receiveFrame(frame).then();
                                     }
-                                } else {
-                                    rsocketRequester?.receiveFrame(frame).then();
                                 }
                             }
                         }
@@ -98,6 +104,7 @@ export class RSocketWebSocketResponder implements Deno.Closer {
                     let frameLengthArray = ByteBuffer.i24ToByteArray(chunk.length);
                     fullFrame.set(frameLengthArray, 0);
                     fullFrame.set(chunk, 3);
+                    // noinspection DuplicatedCode
                     for (const frame of parseFrames(fullFrame)) {
                         let header = frame.header;
                         if (header.type == FrameType.SETUP) {
