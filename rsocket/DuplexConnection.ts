@@ -91,13 +91,13 @@ export class DenoWebSocketDuplexConnection implements DuplexConnection {
 }
 
 export async function connectRSocket(url: string): Promise<DuplexConnection | undefined> {
-    let schema = url.substring(0, url.indexOf(":"))
-    let urlObj = new URL(url.replace(schema + "://", "http://"));
+    let scheme = url.substring(0, url.indexOf(":"))
+    let urlObj = new URL(url.replace(scheme + "://", "http://"));
     let duplexConn: DuplexConnection | undefined;
-    if (schema === 'tcp') {
+    if (scheme === 'tcp') {
         const tcpConn = await Deno.connect({hostname: urlObj.hostname, port: parseInt(urlObj.port)});
         duplexConn = new DenoTcpDuplexConnection(tcpConn);
-    } else if (schema == "ws" || schema == "wss") {
+    } else if (scheme == "ws" || scheme == "wss") {
         const websocket = await connectWebSocket(url);
         duplexConn = new DenoWebSocketDuplexConnection(websocket);
     }

@@ -15,9 +15,9 @@ export class RSocketServer {
     }
 
     public bind(url: string): Closer {
-        let schema = url.substring(0, url.indexOf(":"));
-        let urlObj = new URL(url.replace(schema + "://", "http://"));
-        if (schema === "ws") {
+        let scheme = url.substring(0, url.indexOf(":"));
+        let urlObj = new URL(url.replace(scheme + "://", "http://"));
+        if (scheme === "ws") {
             let serve1 = serve(`:${urlObj.port}`);
             let rSocketResponder = new RSocketWebSocketResponder(urlObj, serve1, this._acceptor);
             rSocketResponder.accept().then();
