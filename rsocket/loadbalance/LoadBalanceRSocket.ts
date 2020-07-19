@@ -41,7 +41,7 @@ class LoadBalanceRSocket implements RSocket {
     }
 
     closeStales(connections: Map<string, RSocket>) {
-        for (let [url, rsocket] of this.url2Conn.entries()) {
+        for (let [url, rsocket] of connections.entries()) {
             console.log("Close the RSocket: " + url);
             rsocket.close();
         }
