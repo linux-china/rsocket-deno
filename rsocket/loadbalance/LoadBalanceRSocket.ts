@@ -69,7 +69,7 @@ class LoadBalanceRSocket implements RSocket {
 
     getRandomRSocket(): RSocket {
         this.counter = this.counter + 1;
-        if (this.counter > this.poolSize) {
+        if (this.counter >= 0x7FFFFFFF) {
             this.counter = 0;
         }
         return this.connections[this.counter % this.poolSize];
