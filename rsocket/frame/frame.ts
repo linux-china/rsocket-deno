@@ -57,8 +57,15 @@ export class RSocketHeader {
 
 }
 
-export class SetupFrame {
+export class RSocketFrame {
     header: RSocketHeader;
+
+    constructor(header: RSocketHeader) {
+        this.header = header;
+    }
+}
+
+export class SetupFrame extends RSocketFrame {
     payload?: Payload;
     metadataMimeType = "message/x.rsocket.composite-metadata.v0";
     dataMimeType = "application/octet-stream";
@@ -68,7 +75,7 @@ export class SetupFrame {
     leaseEnable: boolean;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         let resumeEnable = (header.flags & 0x80) > 0;
         this.leaseEnable = (header.flags & 0x40) > 0;
         let majorVersion = buffer.readI16();
@@ -110,14 +117,13 @@ export class SetupFrame {
     }
 }
 
-export class LeaseFrame {
-    header: RSocketHeader;
+export class LeaseFrame extends RSocketFrame {
     timeToLive = 0;
     numberOfRequests = 0;
     payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         this.timeToLive = 0;
         let timeToLive = buffer.readI32();
         if (timeToLive) {
@@ -130,14 +136,13 @@ export class LeaseFrame {
     }
 }
 
-export class KeepAliveFrame {
-    header: RSocketHeader;
+export class KeepAliveFrame extends RSocketFrame {
     lastReceivedPosition = 0;
     payload?: Payload;
     respond = false;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         let lastReceivedPosition = buffer.readI32();
         if (lastReceivedPosition) {
             this.lastReceivedPosition = lastReceivedPosition;
@@ -149,37 +154,34 @@ export class KeepAliveFrame {
     }
 }
 
-export class RequestResponseFrame {
-    header: RSocketHeader;
+export class RequestResponseFrame extends RSocketFrame {
     payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         if (header && header.frameLength) {
             this.payload = decodePayload(buffer, header.metaPresent, header.frameLength);
         }
     }
 }
 
-export class RequestFNFFrame {
-    header: RSocketHeader;
+export class RequestFNFFrame extends RSocketFrame {
     payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         if (header && header.frameLength) {
             this.payload = decodePayload(buffer, header.metaPresent, header.frameLength);
         }
     }
 }
 
-export class RequestStreamFrame {
-    header: RSocketHeader;
+export class RequestStreamFrame extends RSocketFrame {
     initialRequestN: number | undefined;
     payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         this.initialRequestN = buffer.readI32();
         if (header && header.frameLength) {
             this.payload = decodePayload(buffer, header.metaPresent, header.frameLength);
@@ -187,13 +189,12 @@ export class RequestStreamFrame {
     }
 }
 
-export class RequestChannelFrame {
-    header: RSocketHeader;
+export class RequestChannelFrame extends RSocketFrame {
     initialRequestN: number | undefined;
     payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         this.initialRequestN = buffer.readI32();
         if (header && header.frameLength) {
             this.payload = decodePayload(buffer, header.metaPresent, header.frameLength);
@@ -201,31 +202,28 @@ export class RequestChannelFrame {
     }
 }
 
-export class RequestNFrame {
-    header: RSocketHeader;
+export class RequestNFrame extends RSocketFrame {
     initialRequestN: number | undefined;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         this.initialRequestN = buffer.readI32();
     }
 }
 
-export class CancelFrame {
-    header: RSocketHeader;
+export class CancelFrame extends RSocketFrame {
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
     }
 }
 
-export class PayloadFrame {
-    header: RSocketHeader;
+export class PayloadFrame extends RSocketFrame {
     payload?: Payload;
     completed = false;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         this.completed = (header.flags & 0x40) > 0;
         if (header && header.frameLength) {
             this.payload = decodePayload(buffer, header.metaPresent, header.frameLength);
@@ -233,13 +231,12 @@ export class PayloadFrame {
     }
 }
 
-export class ErrorFrame {
-    header: RSocketHeader;
+export class ErrorFrame extends RSocketFrame {
     code = 0;
     message = "";
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         let errorCode = buffer.readI32();
         if (errorCode) {
             this.code = errorCode;
@@ -254,12 +251,11 @@ export class ErrorFrame {
     }
 }
 
-export class MetadataPushFrame {
-    header: RSocketHeader;
+export class MetadataPushFrame extends RSocketFrame {
     payload?: Payload;
 
     constructor(header: RSocketHeader, buffer: ByteBuffer) {
-        this.header = header;
+        super(header);
         if (header && header.frameLength) {
             let metadataBytes = buffer.readUint8Array(header.frameLength - 6);
             this.payload = new Payload(undefined, metadataBytes);
@@ -267,7 +263,7 @@ export class MetadataPushFrame {
     }
 }
 
-export function* parseFrames(chunk: Uint8Array) {
+export function* parseFrames(chunk: Uint8Array): IterableIterator<RSocketFrame> {
     let byteBuffer = ByteBuffer.fromUint8Array(chunk);
     while (byteBuffer.isReadable()) {
         let header = new RSocketHeader(byteBuffer);
