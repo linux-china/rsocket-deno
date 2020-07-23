@@ -69,7 +69,7 @@ export class CompositeMetadata {
         return this.entriesIterator(this._buffer);
     }
 
-    * entriesIterator(buffer: ByteBuffer): Iterator<MetadataEntry> {
+    * entriesIterator(buffer: ByteBuffer): IterableIterator<MetadataEntry> {
         while (buffer.isReadable()) {
             let metadataTypeOrLength = buffer.readI8();
             if (metadataTypeOrLength) {
