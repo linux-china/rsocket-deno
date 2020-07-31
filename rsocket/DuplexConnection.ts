@@ -7,7 +7,7 @@ import {
 } from "../deps.ts";
 import {ByteBuffer} from "./io/ByteBuffer.ts";
 
-export interface DuplexConnection {
+export interface DuplexConnection extends AsyncIterable<Uint8Array> {
     write(chunk: Uint8Array): Promise<any>;
 
     [Symbol.asyncIterator](): AsyncIterableIterator<Uint8Array>;
