@@ -75,7 +75,7 @@ export class RSocketConnector {
             let closed = false;
             while (!closed) {
                 try {
-                    for await (const chunk of duplexConn.receive()) {
+                    for await (const chunk of duplexConn) {
                         if (!chunk) {
                             rsocketRequester?.close();
                             break;

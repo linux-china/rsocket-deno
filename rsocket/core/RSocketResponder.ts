@@ -32,7 +32,7 @@ export class RSocketResponder implements Deno.Closer {
                 let rsocketRequester: RSocketRequester | undefined;
                 while (!closed) {
                     try {
-                        for await (const chunk of duplexConn.receive()) {
+                        for await (const chunk of duplexConn) {
                             if (!chunk) {
                                 rsocketRequester?.close();
                                 break;
