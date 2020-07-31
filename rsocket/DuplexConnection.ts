@@ -10,7 +10,7 @@ import {ByteBuffer} from "./io/ByteBuffer.ts";
 export interface DuplexConnection {
     write(chunk: Uint8Array): Promise<any>;
 
-    receive(): AsyncIterableIterator<Uint8Array>;
+    [Symbol.asyncIterator](): AsyncIterableIterator<Uint8Array>;
 
     close(): void;
 }
@@ -23,7 +23,7 @@ export class DenoTcpDuplexConnection implements DuplexConnection {
         this.conn = conn;
     }
 
-    receive(): AsyncIterableIterator<Uint8Array> {
+    [Symbol.asyncIterator](): AsyncIterableIterator<Uint8Array> {
         return Deno.iter(this.conn);
     }
 
@@ -51,7 +51,7 @@ export class DenoWebSocketDuplexConnection implements DuplexConnection {
         this.ws.close().catch(console.error);
     }
 
-    async* receive(): AsyncIterableIterator<Uint8Array> {
+    async* [Symbol.asyncIterator](): AsyncIterableIterator<Uint8Array> {
         try {
             for await (const ev of this.ws) {
                 if (isWebSocketPingEvent(ev)) {  // ping event
