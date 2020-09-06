@@ -187,7 +187,7 @@ export class ByteBuffer {
             value = (value - byte) / 256;
         }
         return byteArray.reverse();
-    };
+    }
 
     public static i32ToByteArray(value: number) {
         let byteArray = [0, 0, 0, 0];
@@ -197,7 +197,7 @@ export class ByteBuffer {
             value = (value - byte) / 256;
         }
         return byteArray.reverse();
-    };
+    }
 
     public static i24ToByteArray(value: number) {
         let byteArray = [0, 0, 0];
@@ -207,7 +207,7 @@ export class ByteBuffer {
             value = (value - byte) / 256;
         }
         return byteArray.reverse();
-    };
+    }
 
     public static i16ToByteArray(value: number) {
         let byteArray = [0, 0];
@@ -217,7 +217,7 @@ export class ByteBuffer {
             value = (value - byte) / 256;
         }
         return byteArray.reverse();
-    };
+    }
 
     public static byteArrayToNumber(byteArray: Array<number> | undefined): number | undefined {
         if (byteArray) {
@@ -228,5 +228,5 @@ export class ByteBuffer {
             return value;
         }
         return undefined;
-    };
+    }
 }
