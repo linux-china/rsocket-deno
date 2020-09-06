@@ -140,6 +140,7 @@ export class RSocketRequester implements RSocket {
                     try {
                         await this._responder.fireAndForget(requestFNFFrame.payload);
                     } catch (e) {
+                        console.log(e);
                     }
                 }
                 break;
@@ -182,6 +183,7 @@ export class RSocketRequester implements RSocket {
                     try {
                         await this._responder.metadataPush(metadataPushFrame.payload);
                     } catch (e) {
+                        console.log(e);
                     }
                 }
                 break;
@@ -285,7 +287,7 @@ export class RSocketRequester implements RSocket {
         try {
             this._connection.close();
         } catch (e) {
-
+            console.log(e);
         }
     }
 
