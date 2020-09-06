@@ -4,8 +4,8 @@ import {Publisher} from "../../reactivestreams/mod.ts";
 class LoadBalanceRSocket implements RSocket {
     private connections: Array<RSocket> = [];
     private url2Conn = new Map<string, RSocket>();
-    private poolSize: number = 0;
-    private counter: number = 0;
+    private poolSize = 0;
+    private counter = 0;
 
     async refreshUrl(urls: Array<string>) {
         let newConnections: Array<RSocket> = [];
