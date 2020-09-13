@@ -1,5 +1,5 @@
-import {Observable} from "https://dev.jspm.io/rxjs@6/_esm2015";
-//import { map, filter, switchMap } from 'https://dev.jspm.io/rxjs@6/_esm2015/operators';
+import {Observable} from "https://dev.jspm.io/rxjs@6/_esm2015/index.js";
+//import { map, filter, switchMap } from 'https://dev.jspm.io/rxjs@6/_esm2015/operators/index.js';
 
 import {Publisher, Subscriber, Subscription} from "./mod.ts"
 
