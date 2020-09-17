@@ -1,4 +1,4 @@
-export {encode, decode} from "http://deno.land/std@0.68.0/encoding/utf8.ts"
+export {encode, decode} from "https://deno.land/std@0.68.0/encoding/utf8.ts"
 export {
     WebSocket,
     acceptWebSocket,
