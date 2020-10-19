@@ -121,7 +121,7 @@ Just use "ws://127.0.0.0:42252" format.
 
 # Interoperate with Spring Boot RSocket
 
-* Deno Spring Boot integration: https://github.com/linux-china/rsocket-deno-servic
+* Deno Spring Boot integration: https://github.com/linux-china/rsocket-deno-service
 * springRSocket_test.ts: https://deno.land/x/rsocket/tests/requester/springRSocket_test.ts
 
 # Reactive streams interoperation with RxJS
