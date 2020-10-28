@@ -1,6 +1,6 @@
-export {encode, decode} from "https://deno.land/std@0.68.0/encoding/utf8.ts"
+export {encode, decode} from "https://deno.land/std@0.68.0/encoding/utf8.ts";
+export type {WebSocket} from "https://deno.land/std@0.68.0/ws/mod.ts";
 export {
-    WebSocket,
     acceptWebSocket,
     connectWebSocket,
     isWebSocketCloseEvent,
