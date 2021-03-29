@@ -1,3 +1,11 @@
+# 0.2.0 (2021-03-29)
+
+### Code Refactoring
+
+* Testing with Deno 1.8.2
+* Update to std 0.91.0
+* WebSocket compatible with std@0.91.0/ws/mod.ts
+
 # 0.1.2 (2020-09-03)
 
 ### Code Refactoring
