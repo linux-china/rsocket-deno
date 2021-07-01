@@ -1,15 +1,15 @@
-import {createWebSocket, handshake, WebSocket} from "https://deno.land/std@0.91.0/ws/mod.ts";
-import {BufReader, BufWriter} from "https://deno.land/std@0.91.0/io/bufio.ts";
+import {createWebSocket, handshake, WebSocket} from "https://deno.land/std@0.100.0/ws/mod.ts";
+import {BufReader, BufWriter} from "https://deno.land/std@0.100.0/io/bufio.ts";
 
-export type {WebSocket} from "https://deno.land/std@0.91.0/ws/mod.ts";
+export type {WebSocket} from "https://deno.land/std@0.100.0/ws/mod.ts";
 export {
     acceptWebSocket,
     isWebSocketCloseEvent,
     isWebSocketPingEvent,
     isWebSocketPongEvent
-} from "https://deno.land/std@0.91.0/ws/mod.ts"
+} from "https://deno.land/std@0.100.0/ws/mod.ts"
 
-export {Server, serve} from "https://deno.land/std@0.91.0/http/server.ts";
+export {Server, serve} from "https://deno.land/std@0.100.0/http/server.ts";
 
 
 /** A default TextEncoder instance */
